@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.0.5/fancybox/fancybox.css" integrity="sha256-uTcjoMD6rPt4OyV3Rs02Slxl0BJGMNVKAm/1eYPt2go=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jiml.ee","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.23.2","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500},"language":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/config.min.js" defer></script>
+
+    <meta name="description" content="首次编译   依赖安装   12sudo apt-get updatesudo apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-de">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWrt&#x2F;LEDE 的编译与 Mentohust 软件包的添加">
+<meta property="og:url" content="https://jiml.ee/posts/a5ac1d77.html">
+<meta property="og:site_name" content="Jim&#39;s Blog">
+<meta property="og:description" content="首次编译   依赖安装   12sudo apt-get updatesudo apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-de">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-03T08:36:42.000Z">
+<meta property="article:modified_time" content="2020-10-03T08:36:42.000Z">
+<meta property="article:author" content="Jim Lee">
+<meta property="article:tag" content="OpenWrt">
+<meta property="article:tag" content="路由器">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://jiml.ee/posts/a5ac1d77.html">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jiml.ee/posts/a5ac1d77.html","path":"posts/a5ac1d77.html","title":"OpenWrt/LEDE 的编译与 Mentohust 软件包的添加"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OpenWrt/LEDE 的编译与 Mentohust 软件包的添加 | Jim's Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.0.5/fancybox/fancybox.umd.js" integrity="sha256-UiSieVaV/DXce2LW7QH+o77w+AIoAvSCPBkezriZ2DQ=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/6.1.3/pangu.umd.js" integrity="sha256-erngBMP3zzoIM6eqQ8dmrReh2vqCRgWmORroIfVoDlE=" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/utils.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/motion.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/sidebar.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/next-boot.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/pjax.min.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/search/local-search.min.js" defer></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.1/pdfobject.min.js","integrity":"sha256-jI72I8ZLVflVOisZIOaLvRew3tyvzeu6aZXFm7P7dEo="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/tags/pdf.min.js" defer></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.7.0/mermaid.min.js","integrity":"sha256-4+IKDqhZ/sXjc8Wtl2/MsxI4e0s1KpEVdbEP7V/Lz8U="}}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/tags/mermaid.min.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/fancybox.min.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/pace.min.js" defer></script>
+
+
+  
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/3.0.1/quicklink.umd.js" integrity="sha256-44BednzIpUeQJcY8qtLyarFu0UCCTbgmWOvaoehiFQQ=" crossorigin="anonymous" defer></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"ignores":null,"url":"https://jiml.ee/posts/a5ac1d77.html"}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/quicklink.min.js" defer></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Jim's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Jim's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Never Settle.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#shou-ci-bian-yi"><span class="nav-number">1.</span> <span class="nav-text">首次编译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zai-ci-bian-yi"><span class="nav-number">2.</span> <span class="nav-text">再次编译</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#geng-xin"><span class="nav-number">2.1.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wen-jian-qing-li"><span class="nav-number">2.2.</span> <span class="nav-text">文件清理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bian-yi"><span class="nav-number">2.3.</span> <span class="nav-text">编译</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jin-jie-cao-zuo"><span class="nav-number">3.</span> <span class="nav-text">进阶操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zhi-xie"><span class="nav-number">4.</span> <span class="nav-text">致谢</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#can-kao-lian-jie"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jim Lee"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Jim Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jimlee2048" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jimlee2048" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml" rel="noopener me"><i class="fa fa-rss fa-fw"></i></a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiml.ee/posts/a5ac1d77.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Jim Lee">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OpenWrt&#x2F;LEDE 的编译与 Mentohust 软件包的添加 | Jim's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenWrt/LEDE 的编译与 Mentohust 软件包的添加
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-03 16:36:42" itemprop="dateCreated datePublished" datetime="2020-10-03T16:36:42+08:00">2020-10-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" itemprop="url" rel="index"><span itemprop="name">解决方案</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/a5ac1d77.html" class="post-meta-item twikoo_visitors" data-flag-title="OpenWrt/LEDE 的编译与 Mentohust 软件包的添加" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="twikoo_visitors"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="shou-ci-bian-yi">首次编译</h1>
+<ul>
+<li>
+<p>依赖安装</p>
+  <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get update</span><br><span class="line"><span class="built_in">sudo</span> apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>代码下载，进入目录</p>
+  <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/coolsnowwolf/lede</span><br><span class="line"><span class="built_in">cd</span> lede</span><br></pre></td></tr></tbody></table></figure>
+  <span id="more"></span>
+</li>
+<li>
+<p>软件包下载、安装</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./scripts/feeds update -a</span><br><span class="line">./scripts/feeds install -a</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>添加 MentoHUST 软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk.git package/mentohust</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/BoringCat/luci-app-mentohust.git package/luci-app-mentohust</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>调整 OpenWrt 系统组件</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></tbody></table></figure>
+<p>选择好架构与型号，进入 <code>LuCI</code> 一栏选择插件</p>
+<p><code>*</code> 代表编入固件，<code>M</code> 表示编译成模块或者 IPK 包， 留空为不编译</p>
+<p>详细插件应用说明参见<a target="_blank" rel="noopener" href="https://www.right.com.cn/forum/thread-344825-1-1.html">这里</a></p>
+<blockquote>
+<p>添加 MentoHUST 需勾选以下位置：</p>
+<ul>
+<li>LuCI —&gt; Applications —&gt; luci-app-mentohust</li>
+<li>Network —&gt; Ruijie —&gt; mentohust</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>预下载所需文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make download -j8 V=s</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>开始编译</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j1 V=s</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p><code>-j1</code>：使用单线程编译，数字即为所用线程数。初次推荐单线程编译，一是因为玄学问题可能成功率高，二是方便查看错误日志。</p>
+<p><code>V=s</code>：输出详细日志，用于编译失败时方便找出错误。</p>
+</blockquote>
+</li>
+</ul>
+<h1 id="zai-ci-bian-yi">再次编译</h1>
+<ul>
+<li>
+<p>进入目录</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> lede</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+<h2 id="geng-xin"><a class="header-anchor" href="#更新"></a>更新</h2>
+<blockquote>
+<p>短期内再次编译可忽略</p>
+</blockquote>
+<ul>
+<li>
+<p>更新系统软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt upgrade -y</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>更新 OpenWrt 源码</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>更新 feed 源中软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./scripts/feeds clean</span><br><span class="line">./scripts/feeds update -a</span><br><span class="line">./scripts/feeds install -a</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p><code> ./scripts/feeds clean</code> 可选，用于避免 feeds 较大修改后更新无效</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="wen-jian-qing-li"><a class="header-anchor" href="#文件清理"></a>文件清理</h2>
+<ul>
+<li>
+<p>清除旧的编译产物（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make clean</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>在源码有大规模更新或者内核更新后执行，以保证编译质量。此操作会删除 <code>/bin</code> 和 <code>/build_dir</code> 目录中的文件。</p>
+</blockquote>
+</li>
+<li>
+<p>清除旧的编译产物、交叉编译工具及工具链等目录（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make dirclean</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>更换架构编译前必须执行。此操作会删除 <code>/bin</code> 和 <code>/build_dir</code> 目录的中的文件 (<code>make clean</code>) 以及 <code>/staging_dir</code>、<code>/toolchain</code>、<code>/tmp</code> 和 <code>/logs</code> 中的文件。</p>
+</blockquote>
+</li>
+<li>
+<p>清除 Open­Wrt 源码以外的文件（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make distclean</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>除非是做开发，并打算 push 到 GitHub 这样的远程仓库，否则几乎用不到。此操作相当于 <code>make dirclean</code> 外加删除 <code>/dl</code>、<code>/feeds</code> 目录和<code>.config</code> 文件。</p>
+</blockquote>
+</li>
+<li>
+<p>还原 Open­Wrt 源码到初始状态（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clean -xdf</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如果把源码改坏了，或者长时间没有进行编译时使用。</p>
+</blockquote>
+</li>
+<li>
+<p>清除临时文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf tmp</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>删除执行 <code>make menuconfig</code> 后产生的一些临时文件，包括一些软件包的检索信息，删除后会重新加载 <code>package</code> 目录下的软件包。若不删除会导致一些新加入的软件包不显示。</p>
+</blockquote>
+</li>
+<li>
+<p>删除编译配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -f .config</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>在不删除的情况下如果取消选择某些组件它的依赖组件不会自动取消，所以对于需要调整组件的情况下建议删除。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="bian-yi"><a class="header-anchor" href="#编译"></a>编译</h2>
+<ul>
+<li>
+<p>调整 Open­Wrt 系统组件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如果不打算调整组件则输入 <code>make defconfig</code>，它会检测编译环境并根据更新自动调整编译配置文件。</p>
+</blockquote>
+</li>
+<li>
+<p>预下载编译所需的软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make download -j8 V=s</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>开始编译</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>) || make -j1 || make -j1 V=s</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>多线程编译失败后自动进入单线程编译，失败则输出详细日志。</p>
+</blockquote>
+</li>
+<li>
+<p>编译好的固件存放在 <code>lede/bin/targets/</code> 对应架构的文件下，名称为 <code>openwrt-xxxx-xxxx-squashfs-sysupgrade.bin</code></p>
+</li>
+</ul>
+<h1 id="jin-jie-cao-zuo">进阶操作</h1>
+<ul>
+<li>
+<p>使用 Github Action 进行云编译</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/P3TERX/Actions-OpenWrt">Github</a></p>
+<p><a target="_blank" rel="noopener" href="https://p3terx.com/archives/build-openwrt-with-github-actions.html">中文教程</a></p>
+</li>
+<li>
+<p>在 WSL 上进行编译</p>
+</li>
+</ul>
+<h1 id="zhi-xie">致谢</h1>
+<p><a target="_blank" rel="noopener" href="https://p3terx.com/">@P3TERX</a>，博客里的文章对我有很大帮助，本文自他的博客总结而来，亦有很大一部分文字直接复制自它的博客。他亦是上文所提到的 Github Action 云编译 OpenWrt 模板的作者。</p>
+<p><a target="_blank" rel="noopener" href="https://www.right.com.cn/forum">恩山论坛</a>，我路由相关知识的启蒙点，感谢各路大神的经验分享。</p>
+<h1 id="can-kao-lian-jie">参考链接</h1>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/coolsnowwolf/lede">https://github.com/coolsnowwolf/lede</a></p>
+<p><a target="_blank" rel="noopener" href="https://p3terx.com/archives/openwrt-compilation-steps-and-commands.html">https://p3terx.com/archives/openwrt-compilation-steps-and-commands.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.right.com.cn/forum/thread-344825-1-1.html">https://www.right.com.cn/forum/thread-344825-1-1.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.right.com.cn/forum/thread-1237348-1-1.html">https://www.right.com.cn/forum/thread-1237348-1-1.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk">https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/BoringCat/luci-app-mentohust">https://github.com/BoringCat/luci-app-mentohust</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jim Lee
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://jiml.ee/posts/a5ac1d77.html" title="OpenWrt&#x2F;LEDE 的编译与 Mentohust 软件包的添加">https://jiml.ee/posts/a5ac1d77.html</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/OpenWrt/" rel="tag"><i class="fa fa-tag"></i> OpenWrt</a>
+              <a href="/tags/%E8%B7%AF%E7%94%B1%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 路由器</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/4394c3fa.html" rel="prev" title="使用 Tasker 在 Android 上实现个人动态的发送">
+                  <i class="fa fa-angle-left"></i> 使用 Tasker 在 Android 上实现个人动态的发送
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/3a5c40a1.html" rel="next" title="在 WSL2 上进行 OpenWrt 的编译">
+                  在 WSL2 上进行 OpenWrt 的编译 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments"><div id="twikoo-comments"></div></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2018 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Jim Lee</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="twikoo" type="application/json">{"enable":true,"visitor":true,"envId":"https://blog-twikoo-tawny.vercel.app","el":"#twikoo-comments"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.twikoo.el)
+    .then(() => NexT.utils.getScript(
+      CONFIG.twikoo.jsUrl || 'https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js',
+      { condition: window.twikoo }
+    ))
+    .then(() => {
+      twikoo.init(CONFIG.twikoo);
+    });
+});
+</script>
+<style>
+.post-block, .comments {
+  overflow: visible;
+}
+.tk-owo-emotion {
+  display: inline-block;
+}
+</style>
+<script src="/js/post-outdated-warning.js"></script>
+</body>
+</html>

@@ -1,0 +1,2588 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>博客折腾笔记①：hexo 部署与自定义</title>
+    <url>/posts/c54c0f26.html</url>
+    <content><![CDATA[<p>今天重新部署了一次 Hexo，记录一下过程。<br>
+方案：静态页面部署在 gitpage，hexo 文件备份到 github 私有库</p>
+<blockquote>
+<p><em><strong>注意：</strong></em><br>
+<strong>博客配置文件</strong>：<code>/_config.yml</code> （位于博客根目录下）<br>
+<strong>主题配置文件</strong>：<code>/themes/ThemeName/_config.yml</code> （位于各主题文件夹下）<br>
+请注意区分二者</p>
+</blockquote>
+<h1 id="zhun-bei-gong-zuo">准备工作</h1>
+<p>github 上建一个 xxxx.github.io 的公开仓库和一个私有库<br>
+其中 xxxx 是你的 github 用户名，xxxx.github.io 是博客域名</p>
+<p><a href="https://hexo.io/zh-cn/">hexo 官网</a><br>
+下载安装 <a href="http://nodejs.org/">Node.js</a>、<a href="http://git-scm.com/">Git</a>  ，git 配置好信息<br>
+然后 Cmd/Powershell 执行</p>
+<pre><code>npm install -g hexo-cli
+</code></pre>
+<span id="more"></span>
+<h1 id="chu-shi-hua-hexo">初始化 hexo</h1>
+<p>先建好博客的文件夹<br>
+然后命令行</p>
+<pre><code>hexo init &lt;folder&gt;
+cd &lt;folder&gt;
+npm install
+</code></pre>
+<p>然后修改文件下的_config.yml 参数</p>
+<blockquote>
+<p>参数详见 <a href="https://hexo.io/zh-cn/docs/configuration">https://hexo.io/zh-cn/docs/configuration</a><br>
+记得修改域名</p>
+</blockquote>
+<p>修改_config.yml 的 deploy 部分</p>
+<pre><code># Deployment
+## Docs: https://hexo.io/docs/deployment.html
+deploy:
+    type: git
+    repo: https://github.com/yyyy/xxxx.github.io.git
+    branch: master
+</code></pre>
+<p>修改完后执行</p>
+<pre><code>hexo g
+hexo d
+</code></pre>
+<p>稍等一会，应该就能访问到了</p>
+<h1 id="ji-ben-diao-zheng">基本调整</h1>
+<h2 id="设置备份"><a class="header-anchor" href="#设置备份"></a>设置备份</h2>
+<p>安装插件 <code>hexo-git-backup</code> 把 hexo 文件备份到建好的私有库</p>
+<pre><code>npm install hexo-git-backup --save
+</code></pre>
+<p>安装后在_config.yml 加入以下内容，填好私有库的信息</p>
+<pre><code>backup:
+type: git
+theme: landscape,next
+repository:
+   origin: https://github.com/yyyy/xxxx.github.io.git,branchName
+</code></pre>
+<p>theme 里填写你要同步的主题名<br>
+这里预先填了个 next，稍后再进行主题的安装</p>
+<p>有需要的话，还可以编辑根目录下的<code>.gitinore</code> 来选择备份的文件，这里默认已经配置好不用修改了</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.DS_Store</span><br><span class="line">Thumbs.db</span><br><span class="line">db.json</span><br><span class="line">*.log</span><br><span class="line">node_modules/</span><br><span class="line">public/</span><br><span class="line">.deploy*/</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p><strong>附录</strong>：Hexo 的源文件说明：<br>
+1、<code>_config.yml</code> 站点的配置文件，需要拷贝；<br>
+2、<code>themes/</code> 主题文件夹，需要拷贝；<br>
+3、<code>source</code> 博客文章的.md 文件，需要拷贝；<br>
+4、<code>scaffolds/</code> 文章的模板，需要拷贝；<br>
+5、<code>package.json</code> 安装包的名称，需要拷贝；<br>
+6、<code>.gitignore</code> 限定在 push 时哪些文件可以忽略，需要拷贝；<br>
+7、<code>.git/</code> 主题和站点都有，标志这是一个 git 项目，不需要拷贝；<br>
+8、<code>node_modules/</code> 是安装包的目录，在执行 npm install 的时候会重新生成，不需要拷贝；<br>
+9、<code>public</code> 是 hexo g 生成的静态网页，不需要拷贝；<br>
+10、<code>.deploy_git</code> 同上，hexo g 也会生成，不需要拷贝；<br>
+11、<code>db.json</code> 文件，不需要拷贝。</p>
+<p>引用自：<a href="https://www.jianshu.com/p/baab042849023">https://www.jianshu.com/p/baab042849023</a></p>
+</blockquote>
+<h3 id="备份操作"><a class="header-anchor" href="#备份操作"></a>备份操作</h3>
+<pre><code>hexo backup
+</code></pre>
+<p>或者</p>
+<pre><code>hexo b
+</code></pre>
+<p>进行备份</p>
+<h3 id="还原操作"><a class="header-anchor" href="#还原操作"></a>还原操作</h3>
+<ol>
+<li>
+<p>安装 git、node.js</p>
+</li>
+<li>
+<p>使用 <code>git  clone</code> 将备份库克隆到本地</p>
+</li>
+<li>
+<p><code>cd</code> 进博客根目录，依次执行</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">$ npm install hexo-cli -g</span><br><span class="line">$ npm install</span><br><span class="line">$ npm install hexo-deployer-git</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<h3 id="排错指南"><a class="header-anchor" href="#排错指南"></a><strong>排错指南</strong></h3>
+<ol>
+<li>尝试提权 /sudo</li>
+<li> 出现类似 </li>
+</ol>
+<pre><code>events.js:167
+    throw er; // Unhandled 'error' event
+    ^
+
+Error: spawn rm ENOENT
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:232:19)
+    at onErrorNT (internal/child_process.js:407:16)
+    at process._tickCallback (internal/process/next_tick.js:63:19)
+Emitted 'error' event at:
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:238:12)
+    at onErrorNT (internal/child_process.js:407:16)
+    at process._tickCallback (internal/process/next_tick.js:63:19)
+</code></pre>
+<p>的错误时可以尝试删掉主题文件夹中的.git 隐藏文件夹试试</p>
+<blockquote>
+<p>参考  <a href="https://github.com/coneycode/hexo-git-backup/issues/27">备份报错 #27</a></p>
+</blockquote>
+<h2 id="设置分类，建立模板"><a class="header-anchor" href="#设置分类，建立模板"></a>设置分类，建立模板</h2>
+<p>略</p>
+<h2 id="更换hexo-renderer-markdown-it渲染器"><a class="header-anchor" href="#更换hexo-renderer-markdown-it渲染器"></a>更换 <code>hexo-renderer-markdown-it</code> 渲染器</h2>
+<pre><code>npm un hexo-renderer-marked --save
+npm i hexo-renderer-markdown-it --save
+</code></pre>
+<p>然后再安装几个相关插件</p>
+<pre><code>npm install markdown-it-emoji markdown-it-checkbox markdown-it-katex
+</code></pre>
+<p>安装后复制下列内容到_config.yml</p>
+<pre><code># Markdown-it config
+## Docs: https://github.com/celsomiranda/hexo-renderer-markdown-it/wiki
+markdown:
+render:
+    html: true
+    xhtmlOut: false
+    breaks: true
+    linkify: true
+    typographer: true
+    quotes: '“”‘’'
+plugins:
+    - markdown-it-abbr
+    - markdown-it-footnote
+    - markdown-it-ins
+    - markdown-it-sub
+    - markdown-it-sup
+    - markdown-it-emoji
+    - markdown-it-checkbox
+</code></pre>
+<p>安装后新增的功能：</p>
+<ul>
+<li>emoji：<br>
+😄</li>
+</ul>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">:smile:</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li><s>KateX</s>（存在显示 bug，已弃用，目前实现方式见后）</li>
+</ul>
+<p><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="18.882ex" height="2.646ex" role="img" focusable="false" viewBox="0 -919.5 8345.9 1169.5"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msqrt"><g transform="translate(853, 0)"><g data-mml-node="mn"><path data-c="33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path></g><g data-mml-node="mi" transform="translate(500, 0)"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g><g data-mml-node="mo" transform="translate(1294.2, 0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(2294.4, 0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g><g data-mml-node="mo" transform="translate(0, 59.5)"><path data-c="221A" d="M95 178Q89 178 81 186T72 200T103 230T169 280T207 309Q209 311 212 311H213Q219 311 227 294T281 177Q300 134 312 108L397 -77Q398 -77 501 136T707 565T814 786Q820 800 834 800Q841 800 846 794T853 782V776L620 293L385 -193Q381 -200 366 -200Q357 -200 354 -197Q352 -195 256 15L160 225L144 214Q129 202 113 190T95 178Z"></path></g><rect width="2794.4" height="60" x="853" y="799.5"></rect></g><g data-mml-node="mo" transform="translate(3869.7, 0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mo" transform="translate(4869.9, 0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(5258.9, 0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(5981.1, 0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mi" transform="translate(6981.3, 0)"><path data-c="1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path></g><g data-mml-node="msup" transform="translate(7553.3, 0)"><g data-mml-node="mo"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mn" transform="translate(389, 363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g></g></g></svg></mjx-container></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">$\sqrt{3x-1}+(1+x)^2$</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>Checkbox 选框，TO-DO 用</li>
+<li><input type="checkbox" id="checkbox0"><label for="checkbox0">无</label></li>
+<li><input type="checkbox" id="checkbox1" checked="true"><label for="checkbox1">有 </label></li>
+</ul>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">- [ ] 无</span><br><span class="line">- [x] 有</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>注脚<br>
+1234[^1]</li>
+</ul>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">1234[^1]</span><br><span class="line"> [1]： 注脚演示。</span><br></pre></td></tr></tbody></table></figure>
+<p>[1]： 注脚演示。</p>
+<ul>
+<li>荧光标记<br>
+<mark>荧光 </mark></li>
+</ul>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">==荧光==</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>上标、下标<br>
+19<sup>th</sup><br>
+H<sub>2</sub>O</li>
+</ul>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">19^th^</span><br><span class="line">H~2~O</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li><a href="https://markdown-it.github.io/">以及其他……</a></li>
+</ul>
+<h1 id="zhu-ti-an-zhuang-pei-zhi">主题安装配置</h1>
+<p>这里主题选择的是 <a href="https://github.com/theme-next/hexo-theme-next">next</a></p>
+<pre><code>$ cd hexo
+$ git clone https://github.com/theme-next/hexo-theme-next themes/next
+</code></pre>
+<p>下载后前往博客根目录的_config.yml 切换主题</p>
+<pre><code># Extensions
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+theme: next
+</code></pre>
+<p>随后打开编辑 /themes/next/_config.yml 进行主题配置</p>
+<blockquote>
+<p>官方文档：<a href="https://theme-next.org/docs/">https://theme-next.org/docs/</a></p>
+</blockquote>
+<h2 id="基本设置"><a class="header-anchor" href="#基本设置"></a>基本设置</h2>
+<h3 id="切换风格"><a class="header-anchor" href="#切换风格"></a>切换风格</h3>
+<p>官方提供了 Muse、Mist、Pisces、Gemini 四种布局风格，这里选择 Gemini</p>
+<pre><code># Schemes
+#scheme: Muse
+#scheme: Mist
+#scheme: Pisces
+scheme: Gemini
+</code></pre>
+<h3 id="开启夜间模式适配"><a class="header-anchor" href="#开启夜间模式适配"></a>开启夜间模式适配</h3>
+<pre><code>darkmode: true
+</code></pre>
+<h3 id="切换语言"><a class="header-anchor" href="#切换语言"></a>切换语言</h3>
+<pre><code>language: zh-CN
+</code></pre>
+<h3 id="设置站点图标"><a class="header-anchor" href="#设置站点图标"></a>设置站点图标</h3>
+<pre><code>favicon:
+small: /images/favicon-16x16-next.png
+medium: /images/favicon-32x32-next.png
+apple_touch_icon: /images/apple-touch-icon-next.png
+safari_pinned_tab: /images/logo.svg
+</code></pre>
+<h3 id="备案展示"><a class="header-anchor" href="#备案展示"></a>备案展示</h3>
+<pre><code># Beian ICP and gongan information for Chinese users. See: http://www.beian.miit.gov.cn, http://www.beian.gov.cn
+beian:
+    enable: false
+    icp:
+    # The digit in the num of gongan beian.
+    gongan_id:
+    # The full num of gongan beian.
+    gongan_num:
+    # The icon for gongan beian. See: http://www.beian.gov.cn/portal/download
+    gongan_icon_url:
+</code></pre>
+<h3 id="CC标识"><a class="header-anchor" href="#CC标识"></a>CC 标识</h3>
+<p>这里我选择的是 by-nc-sa</p>
+<pre><code># Creative Commons 4.0 International License.
+# See: https://creativecommons.org/share-your-work/licensing-types-examples
+# Available values of license: by | by-nc | by-nc-nd | by-nc-sa | by-nd | by-sa | zero
+# You can set a language value if you prefer a translated version of CC license, e.g. deed.zh
+# CC licenses are available in 39 languages, you can find the specific and correct abbreviation you need on https://creativecommons.org
+creative_commons:
+license: by-nc-sa
+sidebar: true
+post: true
+language: deed.zh
+</code></pre>
+<h3 id="设置菜单栏"><a class="header-anchor" href="#设置菜单栏"></a>设置菜单栏</h3>
+<pre><code># Usage: `Key: /link/ || icon`
+# Key is the name of menu item. If the translation for this item is available, the translated text will be loaded, otherwise the Key name will be used. Key is case-senstive.
+# Value before `||` delimiter is the target link, value after `||` delimiter is the name of Font Awesome icon.
+# When running the site in a subdirectory (e.g. yoursite.com/blog), remove the leading slash from link value (/archives -&gt; archives).
+# External url should start with http:// or https://
+menu:
+home: / || home
+tags: /tags/ || tags
+categories: /categories/ || th
+archives: /archives/ || archive
+#schedule: /schedule/ || calendar
+#sitemap: /sitemap.xml || sitemap
+#commonweal: /404/ || heartbeat
+about: /about/ || user
+
+# Enable / Disable menu icons / item badges.
+menu_settings:
+icons: true
+badges: false
+</code></pre>
+<h2 id="设置侧边栏"><a class="header-anchor" href="#设置侧边栏"></a>设置侧边栏</h2>
+<pre><code># Sidebar Settings
+# See: https://theme-next.org/docs/theme-settings/sidebar
+</code></pre>
+<h3 id="侧边栏大小位置"><a class="header-anchor" href="#侧边栏大小位置"></a>侧边栏大小位置</h3>
+<pre><code>sidebar:
+# Sidebar Position.
+position: left
+#position: right
+
+# Manual define the sidebar width. If commented, will be default for:
+# Muse | Mist: 320
+# Pisces | Gemini: 240
+#width: 300
+
+# Sidebar padding in pixels.
+padding: 18
+# Sidebar offset from top menubar in pixels (only for Pisces | Gemini).
+offset: 12
+# Enable sidebar on narrow view (only for Muse | Mist).
+onmobile: false
+</code></pre>
+<h3 id="头像"><a class="header-anchor" href="#头像"></a>头像</h3>
+<pre><code># Sidebar Avatar
+avatar:
+# Replace the default image and set the url here.
+url: /images/avatar.png
+# If true, the avatar will be dispalyed in circle.
+rounded: false
+# If true, the avatar will be rotated with the cursor.
+rotated: false
+
+# Posts / Categories / Tags in sidebar.
+site_state: true
+</code></pre>
+<h3 id="友情链接"><a class="header-anchor" href="#友情链接"></a>友情链接</h3>
+<pre><code># Social Links
+# Usage: `Key: permalink || icon`
+# Key is the link label showing to end users.
+# Value before `||` delimiter is the target permalink, value after `||` delimiter is the name of Font Awesome icon.
+social:
+GitHub: https://github.com/xxxx || github
+E-Mail: mailto:xxxx@xxxxx.com || envelope
+RSS: /atom.xml || rss
+#Weibo: https://weibo.com/yourname || weibo
+#Google: https://plus.google.com/yourname || google
+#Twitter: https://twitter.com/yourname || twitter
+#FB Page: https://www.facebook.com/yourname || facebook
+#StackOverflow: https://stackoverflow.com/yourname || stack-overflow
+#YouTube: https://youtube.com/yourname || youtube
+#Instagram: https://instagram.com/yourname || instagram
+#Skype: skype:yourname?call|chat || skype
+
+social_icons:
+enable: true
+icons_only: true
+transition: true
+
+# Blog rolls
+links_settings:
+icon: link
+title: Links
+# Available values: block | inline
+layout: block
+
+links:
+#Title: http://yoursite.com
+
+# Table of Contents in the Sidebar
+# Front-matter variable (unsupport wrap expand_all).
+</code></pre>
+<h3 id="TOC"><a class="header-anchor" href="#TOC"></a>TOC</h3>
+<pre><code># Table of Contents in the Sidebar
+# Front-matter variable (unsupport wrap expand_all).
+toc:
+enable: true
+# Automatically add list number to toc.
+number: true
+# If true, all words will placed on next lines if header width longer then sidebar width.
+wrap: false
+# If true, all level of TOC in a post will be displayed, rather than the activated part of it.
+expand_all: false
+# Maximum heading depth of generated toc.
+max_depth: 6
+</code></pre>
+<h3 id="即时交谈"><a class="header-anchor" href="#即时交谈"></a>即时交谈</h3>
+<pre><code># A button to open designated chat widget in sidebar.
+# Firstly, you need enable the chat service you want to activate its sidebar button.
+chat:
+enable: false
+#service: chatra
+#service: tidio
+icon: comment # Icon name in Font Awesome, set false to disable icon.
+text: Chat # Button text, change it as you wish.
+</code></pre>
+<h2 id="帖子页面"><a class="header-anchor" href="#帖子页面"></a>帖子页面</h2>
+<pre><code># ---------------------------------------------------------------
+# Post Settings
+# See: https://theme-next.org/docs/theme-settings/posts
+# ---------------------------------------------------------------
+</code></pre>
+<p>在文章中使用 <code>&lt;!-- more --&gt;</code> 来使文章在首页不完全展示</p>
+<pre><code># Automatically excerpt description in homepage as preamble text.
+excerpt_description: true
+
+# Read more button
+# If true, the read more button will be displayed in excerpt section.
+read_more_btn: true
+</code></pre>
+<h3 id="文章信息"><a class="header-anchor" href="#文章信息"></a>文章信息</h3>
+<pre><code># Post meta display settings
+post_meta:
+item_text: true
+created_at: true
+updated_at:
+    enable: true
+    another_day: true
+categories: true
+</code></pre>
+<p>安装插件 <code>hexo-symbols-count-time</code> 来显示字数信息和阅读时间预计</p>
+<pre><code>$ npm install hexo-symbols-count-time
+</code></pre>
+<p>然后修改博客根目录_config.yml, 添加</p>
+<pre><code>symbols_count_time:
+symbols: true
+time: true
+total_symbols: true
+total_time: false
+exclude_codeblock: false
+awl: 2
+wpm: 300
+suffix: "mins."
+</code></pre>
+<blockquote>
+<p><strong>Note for Chinese users:</strong> because in Chinese language average word length about ~1.5 and if you at most cases write posts in Chinese (without mixed English), recommended to set awl to 2 and wpm to 300.<br>
+But if you usualy mix your posts with English, awl to 4 and wpm to 275 will be nice.<br>
+然后修改主题的_config.yml</p>
+</blockquote>
+<pre><code># Post wordcount display settings
+# Dependencies: https://github.com/theme-next/hexo-symbols-count-time
+symbols_count_time:
+separated_meta: true
+item_text_post: true
+item_text_total: false
+</code></pre>
+<h3 id="底部标签样式"><a class="header-anchor" href="#底部标签样式"></a>底部标签样式</h3>
+<pre><code># Use icon instead of the symbol # to indicate the tag at the bottom of the post
+tag_icon: true
+</code></pre>
+<h3 id="打赏、文末信息"><a class="header-anchor" href="#打赏、文末信息"></a>打赏、文末信息</h3>
+<pre><code># Reward (Donate)
+# Front-matter variable (unsupport animation).
+reward_settings:
+# If true, reward will be displayed in every article by default.
+enable: false
+animation: false
+#comment: Donate comment here.
+
+reward:
+#wechatpay: /images/wechatpay.png
+#alipay: /images/alipay.png
+#paypal: /images/paypal.png
+#bitcoin: /images/bitcoin.png
+
+# Subscribe through Telegram Channel, Twitter, etc.
+# Usage: `Key: permalink || icon` (Font Awesome)
+follow_me:
+#Twitter: https://twitter.com/username || twitter
+#Telegram: https://t.me/channel_name || telegram
+#WeChat: /images/wechat_channel.jpg || wechat
+#RSS: /atom.xml || rss
+</code></pre>
+<h3 id="相关主题推荐"><a class="header-anchor" href="#相关主题推荐"></a>相关主题推荐</h3>
+<p>安装 <code>hexo-related-popular-posts</code></p>
+<pre><code>npm install hexo-related-popular-posts
+</code></pre>
+<p>修改主题的配置文件</p>
+<pre><code># Related popular posts
+# Dependencies: https://github.com/tea3/hexo-related-popular-posts
+related_posts:
+enable: true
+title: # Custom header, leave empty to use the default one
+display_in_home: false
+params:
+    maxCount: 5
+    #PPMixingRate: 0.0
+    #isDate: false
+    #isImage: false
+    #isExcerpt: false
+</code></pre>
+<h3 id="标签页面"><a class="header-anchor" href="#标签页面"></a>标签页面</h3>
+<p>先创建标签页面</p>
+<pre><code>hexo new page Tags
+</code></pre>
+<p>然后打开 /source/tags/index.md，编辑成</p>
+<pre><code>---
+title: Tags
+date: 2020-03-19 16:21:51
+type: tags
+comments: false
+---
+</code></pre>
+<p>然后修改主题的对应配置文件</p>
+<pre><code># TagCloud settings for tags page.
+tagcloud:
+# All values below are same as default, change them by yourself.
+min: 12 # Minimun font size in px
+max: 30 # Maxium font size in px
+start: "#ccc" # Start color (hex, rgba, hsla or color keywords)
+end: "#111" # End color (hex, rgba, hsla or color keywords)
+amount: 200 # Amount of tags, change it if you have more than 200 tags
+</code></pre>
+<h3 id="分类页面"><a class="header-anchor" href="#分类页面"></a>分类页面</h3>
+<p>同上</p>
+<pre><code>hexo new page Categories
+</code></pre>
+<p>编辑生成的 <code>index.md</code></p>
+<pre><code>---
+title: Categories
+date: 2020-03-19 16:19:06
+type: categories
+comments: false
+---
+</code></pre>
+<h3 id="404界面"><a class="header-anchor" href="#404界面"></a>404 界面</h3>
+<p>把 404.html 放在 /source/ 下，然后修改博客根目录的配置文件</p>
+<pre><code>skip_render: "404.html"
+</code></pre>
+<h3 id="谷歌日历-（未配置）"><a class="header-anchor" href="#谷歌日历-（未配置）"></a>谷歌日历 （未配置）</h3>
+<pre><code># Google Calendar
+# Share your recent schedule to others via calendar page.
+calendar:
+calendar_id: &lt;required&gt; # Your Google account E-Mail
+api_key: &lt;required&gt;
+orderBy: startTime
+offsetMax: 24 # Time Range
+offsetMin: 4 # Time Range
+showDeleted: false
+singleEvents: true
+maxResults: 250
+</code></pre>
+<h3 id="安卓上chrome的沉浸颜色？（不是很明白）"><a class="header-anchor" href="#安卓上chrome的沉浸颜色？（不是很明白）"></a>安卓上 chrome 的沉浸颜色？（不是很明白）</h3>
+<pre><code># Android Chrome header panel color ($brand-bg / $headband-bg =&gt; $black-deep).
+android_chrome_color: "#222"
+</code></pre>
+<h3 id="自定义logo，在网站标题菜单栏上面的位置"><a class="header-anchor" href="#自定义logo，在网站标题菜单栏上面的位置"></a>自定义 logo，在网站标题菜单栏上面的位置</h3>
+<pre><code># Custom Logo (Do not support scheme Mist)
+custom_logo: #/uploads/custom-logo.jpg
+</code></pre>
+<h3 id="代码块的风格"><a class="header-anchor" href="#代码块的风格"></a>代码块的风格</h3>
+<p>配色方案预览：<a href="https://github.com/chriskempson/tomorrow-theme">https://github.com/chriskempson/tomorrow-theme</a></p>
+<pre><code>codeblock:
+# Code Highlight theme
+# Available values: normal | night | night eighties | night blue | night bright | solarized | solarized dark | galactic
+# See: https://github.com/chriskempson/tomorrow-theme
+highlight_theme: night
+# Add copy button on codeblock
+copy_button:
+    enable: true
+    # Show text copy result.
+    show_result: true
+    # Available values: default | flat | mac
+    style: flat
+</code></pre>
+<h3 id="返回顶部样式"><a class="header-anchor" href="#返回顶部样式"></a>返回顶部样式</h3>
+<pre><code>back2top:
+enable: true
+# Back to top in sidebar.
+sidebar: false
+# Scroll percent label in b2t button.
+scrollpercent: true
+
+# Reading progress bar
+reading_progress:
+enable: false
+# Available values: top | bottom
+position: top
+color: "#37c6c0"
+height: 3px
+</code></pre>
+<h3 id="阅读进度记忆、书签"><a class="header-anchor" href="#阅读进度记忆、书签"></a>阅读进度记忆、书签</h3>
+<pre><code># Bookmark Support
+bookmark:
+enable: true
+# Customize the color of the bookmark.
+color: "#222"
+# If auto, save the reading progress when closing the page or clicking the bookmark-icon.
+# If manual, only save it by clicking the bookmark-icon.
+save: manual
+</code></pre>
+<h3 id="右上角来Github叉我啊图标"><a class="header-anchor" href="#右上角来Github叉我啊图标"></a>右上角<s>来 Github 叉我啊</s>图标</h3>
+<pre><code># `Follow me on GitHub` banner in the top-right corner.
+github_banner:
+enable: false
+permalink: https://github.com/yourname
+title: Follow me on GitHub
+</code></pre>
+<h3 id="字体设置"><a class="header-anchor" href="#字体设置"></a>字体设置</h3>
+<p>详见 <a href="https://theme-next.org/docs/theme-settings/#Fonts-Customization">https://theme-next.org/docs/theme-settings/#Fonts-Customization</a><br>
+这里用的是默认，只添加了中科大的源，其他的就不展示了</p>
+<pre><code># Uri of fonts host, e.g. https://fonts.googleapis.com (Default).
+host: //fonts.lug.ustc.edu.cn
+</code></pre>
+<h3 id="SEO相关"><a class="header-anchor" href="#SEO相关"></a>SEO 相关</h3>
+<p>禁用百度移动页面转换</p>
+<pre><code># Disable Baidu transformation on mobile devices.
+disable_baidu_transformation: true
+</code></pre>
+<p>其他没有设置，略</p>
+<h3 id="高级设置"><a class="header-anchor" href="#高级设置"></a>高级设置</h3>
+<h3 id="RSS订阅"><a class="header-anchor" href="#RSS订阅"></a>RSS 订阅</h3>
+<pre><code>$ npm install hexo-generator-feed
+</code></pre>
+<p>然后在博客配置文件中添加：</p>
+<pre><code>feed:
+type: atom
+path: atom.xml
+limit: 20
+hub:
+content: true
+#content_limit: 140
+content_limit_delim: ' '
+order_by: -date
+icon: icon.png
+autodiscovery: true
+template:
+</code></pre>
+<p>参数参考文档：<a href="https://github.com/hexojs/hexo-generator-feed">https://github.com/hexojs/hexo-generator-feed</a></p>
+<h3 id="MathJax-数学公式渲染"><a class="header-anchor" href="#MathJax-数学公式渲染"></a>MathJax 数学公式渲染</h3>
+<p>参考：<a href="https://github.com/stevenjoezhang/hexo-filter-mathjax">https://github.com/stevenjoezhang/hexo-filter-mathjax</a></p>
+<pre><code>$ npm install hexo-filter-mathjax
+</code></pre>
+<p>博客配置文件加上</p>
+<pre><code>mathjax:
+tags: none # or 'ams' or 'all'
+single_dollars: true # enable single dollar signs as in-line math delimiters
+cjk_width: 0.9 # relative CJK char width
+normal_width: 0.6 # relative normal (monospace) width
+</code></pre>
+<p>排错指南：如果出现无法渲染页面的情况，重新安装 <code>hexo-renderer-markdown-it</code> 即可</p>
+<blockquote>
+<p><em><strong>注意：</strong></em></p>
+<ol>
+<li>注意符号冲突，如 <code>$</code> 前加 <code>\</code> 来避免冲突</li>
+<li>需要渲染数学公式，请先在文章开头 font-matter 中加入 <code>mathjax: true</code><br>
+eg:</li>
+</ol>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">&lt;!-- This post will render the Math Equations --&gt;</span><br><span class="line"> ---</span><br><span class="line"> title: Will Render Math</span><br><span class="line"> mathjax: true   </span><br><span class="line"> ---</span><br></pre></td></tr></tbody></table></figure>
+</blockquote>
+<h3 id="pjax"><a class="header-anchor" href="#pjax"></a>pjax</h3>
+<p>采用 CDN 方式安装<br>
+先修改</p>
+<pre><code>pjax: true
+</code></pre>
+<p>然后修改下方</p>
+<pre><code>vendors:
+...
+pjax: //cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js
+</code></pre>
+<h3 id="FancyBox"><a class="header-anchor" href="#FancyBox"></a>FancyBox</h3>
+<p>同上，先</p>
+<pre><code>fancybox: true
+</code></pre>
+<p>然后</p>
+<pre><code>vendors:
+...
+jquery: //cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
+fancybox: //cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.pack.js
+fancybox_css: //cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css
+...
+</code></pre>
+<h3 id="Lazyload-图片懒加载"><a class="header-anchor" href="#Lazyload-图片懒加载"></a>Lazyload 图片懒加载</h3>
+<p>同上，先</p>
+<pre><code>lazyload: true
+</code></pre>
+<p>然后</p>
+<pre><code>vendors:
+...
+lazyload: //cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js
+...
+</code></pre>
+<h3 id="Pangu-Autospace-中英文自动空格分离-（未配置）"><a class="header-anchor" href="#Pangu-Autospace-中英文自动空格分离-（未配置）"></a>Pangu Autospace 中英文自动空格分离 （未配置）</h3>
+<p><a href="https://theme-next.org/docs/third-party-services/external-libraries#Pangu-Autospace">https://theme-next.org/docs/third-party-services/external-libraries#Pangu-Autospace</a></p>
+<h3 id="Quicklink-（与pajx冲突，未配置）"><a class="header-anchor" href="#Quicklink-（与pajx冲突，未配置）"></a>Quicklink （与 pajx 冲突，未配置）</h3>
+<p><a href="https://theme-next.org/docs/third-party-services/external-libraries#Quicklink">https://theme-next.org/docs/third-party-services/external-libraries#Quicklink</a></p>
+<h3 id="Animation-Effect-过度动画设置（未配置）"><a class="header-anchor" href="#Animation-Effect-过度动画设置（未配置）"></a>Animation Effect 过度动画设置（未配置）</h3>
+<p><a href="https://theme-next.org/docs/third-party-services/external-libraries#Animation-Effect">https://theme-next.org/docs/third-party-services/external-libraries#Animation-Effect</a></p>
+<h3 id="Progress-Bar-网页加载进度条动画"><a class="header-anchor" href="#Progress-Bar-网页加载进度条动画"></a>Progress Bar 网页加载进度条动画</h3>
+<p>同上，先</p>
+<pre><code>pace:
+enable: true
+</code></pre>
+<p>然后配置 css</p>
+<pre><code>vendors:
+...
+pace: //cdn.jsdelivr.net/npm/pace-js@1/pace.min.js
+pace_css: //cdn.jsdelivr.net/npm/pace-js@1/themes/black/pace-theme-minimal.css
+...
+</code></pre>
+<p>上方<code> pace_css</code> 中可以设置颜色（修改 black）<br>
+可选效果一览：<a href="https://github.hubspot.com/pace/docs/welcome/">https://github.hubspot.com/pace/docs/welcome/</a><br>
+可选颜色：<a href="https://www.jsdelivr.com/package/npm/pace-js?path=themes">https://www.jsdelivr.com/package/npm/pace-js?path=themes</a></p>
+<h3 id="Valine-评论系统"><a class="header-anchor" href="#Valine-评论系统"></a>Valine 评论系统</h3>
+<p>这里使用 <a href="https://valine.js.org/">Valine</a><br>
+先注册登录 <a href="https://leancloud.app/">Leanclub 国际站</a>（需要验证手机号），然后参考 https://theme-next.org/docs/third-party-services/comments#Valine-China</p>
+<blockquote>
+<p><em><strong>注意：</strong></em> 中国站需要实名验证，且网站似乎还要已备案才能用</p>
+</blockquote>
+<h3 id="LeanCloud-访问数据统计"><a class="header-anchor" href="#LeanCloud-访问数据统计"></a>LeanCloud 访问数据统计</h3>
+<p><a href="https://github.com/theme-next/hexo-theme-next/blob/master/docs/zh-CN/LEANCLOUD-COUNTER-SECURITY.md">https://github.com/theme-next/hexo-theme-next/blob/master/docs/zh-CN/LEANCLOUD-COUNTER-SECURITY.md</a></p>
+<blockquote>
+<p><em><strong>注意：</strong></em> 涉及域名，更换域名时注意修改！</p>
+</blockquote>
+<h3 id="Local-Search-本地搜索"><a class="header-anchor" href="#Local-Search-本地搜索"></a>Local Search 本地搜索</h3>
+<pre><code>$ npm install hexo-generator-searchdb
+</code></pre>
+<p>然后编辑博客配置文件，加入</p>
+<pre><code>search:
+path: search.xml
+field: post
+format: html
+limit: 10000
+</code></pre>
+<p>再编辑主题配置文件</p>
+<pre><code># Local Search
+# Dependencies: https://github.com/theme-next/hexo-generator-searchdb
+local_search:
+enable: true
+# If auto, trigger search by changing input.
+# If manual, trigger search by pressing enter key or search button.
+trigger: auto
+# Show top n results per article, show all results by setting to -1
+top_n_per_article: 1
+# Unescape html strings to the readable one.
+unescape: false
+# Preload the search data when the pag
+preload: false
+</code></pre>
+<h3 id="特殊标签"><a class="header-anchor" href="#特殊标签"></a>特殊标签</h3>
+<p>使用文档：<a href="https://hexo.io/zh-cn/docs/tag-plugins.html">https://hexo.io/zh-cn/docs/tag-plugins.html</a><br>
+这里仅提供示例</p>
+<h4 id="引言"><a class="header-anchor" href="#引言"></a>引言</h4>
+<blockquote class="blockquote-center">
+<p>Elegant in code, simple in core</p>
+
+</blockquote>
+<blockquote><p>Every interaction is both precious and an opportunity to delight.</p>
+<footer><strong>Seth Godin</strong><cite><a href="http://sethgodin.typepad.com/seths_blog/2009/07/welcome-to-island-marketing.html">Welcome to Island Marketing</a></cite></footer></blockquote>
+<blockquote><p>Do not just seek happiness for yourself. Seek happiness for all. Through kindness. Through mercy.</p>
+<footer><strong>David Levithan</strong><cite>Wide Awake</cite></footer></blockquote>
+<h4 id="Note"><a class="header-anchor" href="#Note"></a>Note</h4>
+<p>文档：<a href="https://theme-next.org/docs/tag-plugins/note">https://theme-next.org/docs/tag-plugins/note</a></p>
+<div class="note "><h4 id="Header"><a class="header-anchor" href="#Header"></a>Header</h4>
+<p>(without define class style)</p>
+</div>
+<div class="note primary"><h4 id="Primary-Header"><a class="header-anchor" href="#Primary-Header"></a>Primary Header</h4>
+<p><strong>Welcome</strong> to <a href="https://hexo.io">Hexo!</a></p>
+</div>
+<div class="note default"><h4 id="Lists-in-note"><a class="header-anchor" href="#Lists-in-note"></a>Lists in note</h4>
+<ul>
+<li>ul</li>
+<li>ul
+<ul>
+<li>ul</li>
+<li>ul</li>
+</ul>
+</li>
+<li>ul</li>
+</ul>
+<ol>
+<li>ol</li>
+<li>ol</li>
+<li>ol</li>
+<li>ol</li>
+<li>ol</li>
+</ol>
+</div>
+<h4 id="Tabs"><a class="header-anchor" href="#Tabs"></a>Tabs</h4>
+<p>文档：<a href="https://theme-next.org/docs/tag-plugins/tabs">https://theme-next.org/docs/tag-plugins/tabs</a><br>
+<s>我真的不懂啊</s></p>
+<div class="tabs" id="first-unique-name"><ul class="nav-tabs"><li class="tab active"><a href="#first-unique-name-1">First unique name 1</a></li><li class="tab"><a href="#first-unique-name-2">First unique name 2</a></li><li class="tab"><a href="#first-unique-name-3">First unique name 3</a></li></ul><div class="tab-content"><div class="tab-pane active" id="first-unique-name-1"><p><strong>This is Tab 1.</strong></p></div><div class="tab-pane" id="first-unique-name-2"><p><strong>This is Tab 2.</strong></p></div><div class="tab-pane" id="first-unique-name-3"><p><strong>This is Tab 3.</strong></p></div></div></div>
+<h4 id="PDF"><a class="header-anchor" href="#PDF"></a>PDF</h4>
+<p>文档：<a href="https://theme-next.org/docs/tag-plugins/pdf">https://theme-next.org/docs/tag-plugins/pdf</a></p>
+<div class="pdf-container" data-target="/test.pdf" data-height="600px"></div>
+<h3 id="Mermaid-流程图"><a class="header-anchor" href="#Mermaid-流程图"></a>Mermaid 流程图</h3>
+<p>文档：<a href="https://theme-next.org/docs/tag-plugins/mermaid">https://theme-next.org/docs/tag-plugins/mermaid</a></p>
+<p><s>其他官方文档有的就自己看去吧</s></p>
+]]></content>
+      <categories>
+        <category>站点日志</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>博客折腾笔记②：hexo 的优化</title>
+    <url>/posts/3a4e373e.html</url>
+    <content><![CDATA[<h1 id="wen-zhang-yong-jiu-lian-jie-wei-yi-hua">文章永久链接唯一化</h1>
+<p>为解决 hexo 默认设置下改变源文件名或使用中文标题带来的文章链接问题，这里使用 <code>hexo-abbrlink</code> 插件来解决问题</p>
+<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attribute">npm</span> install hexo-abbrlink --save</span><br></pre></td></tr></tbody></table></figure>
+<span id="more"></span>
+<p>然后更改博客配置文件<code>_config.yml</code>, 这里我改成</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attr">permalink:</span> <span class="string">:posts/:year/:abbrlink/</span></span><br></pre></td></tr></tbody></table></figure>
+<p>还可以设置永久链接的生成算法，在博客配置文件中加入</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attr">abbrlink:</span></span><br><span class="line">  <span class="attr">alg:</span> <span class="string">crc32</span>  <span class="comment"># support crc16(default) and crc32</span></span><br><span class="line">  <span class="attr">rep:</span> <span class="string">hex</span>    <span class="comment"># support dec(default) and hex</span></span><br></pre></td></tr></tbody></table></figure>
+<p>不同算法的生成效果：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">crc16 &amp; hex</span><br><span class="line">https://post.zz173.com/posts/66c8.html</span><br><span class="line">crc16 &amp; dec</span><br><span class="line">https://post.zz173.com/posts/65535.html</span><br><span class="line">crc32 &amp; hex</span><br><span class="line">https://post.zz173.com/posts/8ddf18fb.html</span><br><span class="line">crc32 &amp; dec</span><br><span class="line">https://post.zz173.com/posts/1690090958.html</span><br></pre></td></tr></tbody></table></figure>
+<p>一些知识补充：</p>
+<blockquote>
+<blockquote>
+<p>百度蜘蛛抓取网页的规则：对于蜘蛛说网页权重越高、信用度越高抓取越频繁，例如网站的首页和内页。蜘蛛先抓取网站的首页，因为首页权重更高，并且大部分的链接都是指向首页。然后通过首页抓取网站的内页，并不是所有内页蜘蛛都会去抓取。</p>
+</blockquote>
+<p>搜索引擎认为对于一般的中小型站点，3 层足够承受所有的内容了，所以蜘蛛经常抓取的内容是前三层，而超过三层的内容蜘蛛认为那些内容并不重要，所以不经常爬取。出于这个原因所以 permalink 后面跟着的最好不要超过 2 个斜杠。[^]</p>
+</blockquote>
+<h1 id="xin-she-bei-shang-hui-fu-bo-ke-bei-fen-de-wen-ti-jie-jue">新设备上恢复博客备份的问题解决</h1>
+<h2 id="code-sudo-npm-install-code-shi-bai"><a class="header-anchor" href="#sudo-npm-install-失败"></a><code>sudo npm install </code>失败</h2>
+<p>解决方案：不要用 <code>sudo</code>, 直接 <code>npm install</code> 就好</p>
+<h2 id="code-hexo-b-code-bao-cuo"><a class="header-anchor" href="#hexo-b报错"></a><code>hexo b</code> 报错</h2>
+<p>在新装的 UTG 上恢复 Blog，最后执行 <code>hexo b</code> 的时候报错了</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">fatal: <span class="string">'github'</span> does not appear to be a git repository</span><br><span class="line">fatal: 无法读取远程仓库。</span><br><span class="line"></span><br><span class="line">请确认您有正确的访问权限并且仓库存在。</span><br></pre></td></tr></tbody></table></figure>
+<p>翻了翻插件的 issuse，看到了相似的问题<a href="https://github.com/coneycode/hexo-git-backup/issues/20">#20</a></p>
+<p>参考里面的内容，修改<strong>博客配置文件</strong>里插件的相关配置，把 <code>github</code> 换成 <code>origin</code></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">backup:</span><br><span class="line">  type: git</span><br><span class="line">  repository:</span><br><span class="line">    origin: git@github:bx_reader/bx-reader-api.git,master</span><br></pre></td></tr></tbody></table></figure>
+<p>这里顺便把 git 的 https 连接改成了 git 连接，这样就不用每次都输入账号密码了</p>
+<p>再次尝试，问题解决</p>
+<h1 id="hexo-wen-zhang-jia-mi">Hexo 文章加密</h1>
+<p>使用插件 <a href="https://github.com/MikeCoder/hexo-blog-encrypt">hexo-blog-encrypt</a></p>
+<h2 id="an-zhuang"><a class="header-anchor" href="#安装"></a>安装</h2>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">npm install --save hexo-blog-encrypt</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="shi-yong"><a class="header-anchor" href="#使用"></a>使用</h2>
+<p>在文章信息头添加 <code>password</code> 字段</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">Hello</span> <span class="string">World</span></span><br><span class="line"><span class="attr">date:</span> <span class="number">2016-03-30 21:18:02</span></span><br><span class="line"><span class="attr">password:</span> <span class="string">mikemessi</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></tbody></table></figure>
+<p>也可以在文章信息头单独自定义密码输入交互信息</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">Hello</span> <span class="string">World</span></span><br><span class="line"><span class="attr">tags:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">作为日记加密</span></span><br><span class="line"><span class="attr">date:</span> <span class="number">2016-03-30 21:12:21</span></span><br><span class="line"><span class="attr">password:</span> <span class="string">mikemessi</span></span><br><span class="line"><span class="attr">abstract:</span> <span class="string">有东西被加密了,</span> <span class="string">请输入密码查看.</span></span><br><span class="line"><span class="attr">message:</span> <span class="string">您好,</span> <span class="string">这里需要密码.</span></span><br><span class="line"><span class="attr">wrong_pass_message:</span> <span class="string">抱歉,</span> <span class="string">这个密码看着不太对,</span> <span class="string">请再试试.</span></span><br><span class="line"><span class="attr">wrong_hash_message:</span> <span class="string">抱歉,</span> <span class="string">这个文章不能被校验,</span> <span class="string">不过您还是能看看解密后的内容.</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></tbody></table></figure>
+<h2 id="jin-jie"><a class="header-anchor" href="#进阶"></a>进阶</h2>
+<h3 id="quan-ju-pei-zhi"><a class="header-anchor" href="#全局配置"></a>全局配置</h3>
+<p>在站点根目录下的<code>_config.yml</code> 里可以添加以下内容进行全局配置</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># Security</span></span><br><span class="line"><span class="attr">encrypt:</span> <span class="comment"># hexo-blog-encrypt</span></span><br><span class="line">  <span class="attr">abstract:</span> <span class="string">有东西被加密了,</span> <span class="string">请输入密码查看.</span></span><br><span class="line">  <span class="attr">message:</span> <span class="string">您好,</span> <span class="string">这里需要密码.</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">  <span class="bullet">-</span> {<span class="attr">name:</span> <span class="string">tagName</span>, <span class="attr">password:</span> <span class="string">密码A</span>}</span><br><span class="line">  <span class="bullet">-</span> {<span class="attr">name:</span> <span class="string">tagName</span>, <span class="attr">password:</span> <span class="string">密码B</span>}</span><br><span class="line">  <span class="attr">template:</span> <span class="string">&lt;div</span> <span class="string">id="hexo-blog-encrypt"</span> <span class="string">data-wpm="{{hbeWrongPassMessage}}"</span> <span class="string">data-whm="{{hbeWrongHashMessage}}"&gt;&lt;div</span> <span class="string">class="hbe-input-container"&gt;&lt;input</span> <span class="string">type="password"</span> <span class="string">id="hbePass"</span> <span class="string">placeholder="{{hbeMessage}}"</span> <span class="string">/&gt;&lt;label&gt;{{hbeMessage}}&lt;/label&gt;&lt;div</span> <span class="string">class="bottom-line"&gt;&lt;/div&gt;&lt;/div&gt;&lt;script</span> <span class="string">id="hbeData"</span> <span class="string">type="hbeData"</span> <span class="string">data-hmacdigest="{{hbeHmacDigest}}"&gt;{{hbeEncryptedData}}&lt;/script&gt;&lt;/div&gt;</span></span><br><span class="line">  <span class="attr">wrong_pass_message:</span> <span class="string">抱歉,</span> <span class="string">这个密码看着不太对,</span> <span class="string">请再试试.</span></span><br><span class="line">  <span class="attr">wrong_hash_message:</span> <span class="string">抱歉,</span> <span class="string">这个文章不能被校验,</span> <span class="string">不过您还是能看看解密后的内容.</span></span><br></pre></td></tr></tbody></table></figure>
+<p>配置优先级是</p>
+<p><strong>文章信息头 &gt; <code>_config.yml</code> (站点根目录下的) &gt; 默认配置</strong></p>
+]]></content>
+      <categories>
+        <category>站点日志</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>博客折腾笔记③：搭建个人动态页面 iM</title>
+    <url>/posts/2b426e0a.html</url>
+    <content><![CDATA[<p>今天在少数派上看到一篇搭建类似微博的个人动态页面的指南，我非常感高兴：出于对实现私密树洞分享心情的需要以及言论审查的苦恼，我想在博客上实现这样的功能很久了。感谢原作者为不懂技术的脚本小子我造好了轮子，接下来只需简单配置即可实现所需功能了。</p>
+<p>以下是我的配置过程：</p>
+<blockquote>
+<p>参考文章：<a href="https://sspai.com/post/60024">保卫表达：用后端 BaaS 快速搭建专属无点赞评论版微博 ——b 言 b 语</a></p>
+</blockquote>
+<span id="more"></span>
+<h1 id="pei-zhi-hou-duan-baa-s">配置后端 BaaS</h1>
+<p>这里使用 <a href="https://leancloud.app/">LeanCloud 国际版</a></p>
+<p>登入后创建应用并命名</p>
+<p>进入新建好的应用，点击<code>新建Class</code>，将新建的 Class 命名为 content</p>
+<p>同时设置下方 create 、delete 、update 三项权限为” 指定用户 “，其他权限默认即可</p>
+<p><img data-src="https://i.loli.net/2020/04/20/cgBW2ryuwPd1iXf.png" alt=""></p>
+<p>点击刚创建的 content Class</p>
+<p>点击 添加列 并创建名称为 content 的「列」，类型为 String</p>
+<p><img data-src="https://i.loli.net/2020/04/20/vLmAcuBIGPUZK4x.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/04/20/czwJRK4F75DsPbA.png" alt=""></p>
+<p>完成后点击左侧<code>设置</code> - <code>应用 Keys</code>，记录三组 Keys 备用</p>
+<p><img data-src="https://i.loli.net/2020/04/20/Kaxt5GOo3LRgMmy.png" alt=""></p>
+<h1 id="pei-zhi-ke-hu-duan-fa-song-gong-ju">配置客户端发送工具</h1>
+<h2 id="winodws-shi-yong-a-href-https-www-getquicker-net-quicker-a"><a class="header-anchor" href="#Winodws：使用Quicker"></a>Winodws：使用 <a href="https://www.getquicker.net/">Quicker</a></h2>
+<p>Quicker 模板地址：<a href="https://getquicker.net/sharedaction?code=eeb80278-5f53-4b0d-d333-08d7e0dd26a9">点击安装</a></p>
+<p>安装模板后右键编辑模板，修改变量定义和其他内容</p>
+<p><img data-src="https://i.loli.net/2020/04/20/QAK8tCqRg79GyNL.png" alt=""></p>
+<p>尝试发送一次请求，如果配置正确，在 LeanCloud 的后台刷新就能看到一条记录了。<strong>此后的删除、修改，都需要通过该后台进行。</strong></p>
+<h2 id="android"><a class="header-anchor" href="#Android"></a>Android</h2>
+<p>请参考我的<a href="https://jiml.ee/posts/4394c3fa.html">另一篇文章</a></p>
+<h1 id="zai-bo-ke-shang-tian-jia-jie-mian">在博客上添加界面</h1>
+<p>在博客 <code>/source</code> 下新建文件夹 <code>iM</code></p>
+<p>下载作者提供的<a href="https://github.com/daibor/nonsense.fun">页面文件</a></p>
+<p>将其复制到 <code>/source/iM</code> 下，打开编辑器自行修改其中内容</p>
+<p>请注意填写 53-54 行的 <code>appId</code> 和 <code>appKey</code></p>
+<p>修改后打开博客根目录<code>_config.yml</code>，在 <code>skip_render</code> 添加新建好的 <code>iM</code> 文件夹</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">"404.html"</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">"iM/**"</span></span><br></pre></td></tr></tbody></table></figure>
+<p>保存后打开所用主题文件夹下的<code>_config.yml</code>，向菜单栏添加 iM 的入口</p>
+<p>这里以主题 NeXT 为例：编辑 <code>menu</code> 下面的内容，添加<code> iM: /iM/ || user</code></p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment"># Usage: `Key: /link/ || icon`</span></span><br><span class="line"><span class="comment"># Key is the name of menu item. If the translation for this item is available, the translated text will be loaded, otherwise the Key name will be used. Key is case-senstive.</span></span><br><span class="line"><span class="comment"># Value before `||` delimiter is the target link, value after `||` delimiter is the name of Font Awesome icon.</span></span><br><span class="line"><span class="comment"># When running the site in a subdirectory (e.g. yoursite.com/blog), remove the leading slash from link value (/archives -&gt; archives).</span></span><br><span class="line"><span class="comment"># External url should start with http:// or https://</span></span><br><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">home</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">th</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">tags</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">archive</span></span><br><span class="line">  <span class="attr">iM:</span> <span class="string">/iM/</span> <span class="string">||</span> <span class="string">user</span> </span><br></pre></td></tr></tbody></table></figure>
+<p>完成后终端依次输入</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></tbody></table></figure>
+<p>打开 localhost:4000 查看效果</p>
+<h1 id="to-do">To-Do</h1>
+<ul>
+<li><input type="checkbox" id="checkbox2"><label for="checkbox2">修改美化 iM 的页面文件</label><code>index.md</code>，参考 Cytus2 里的界面魔改？</li>
+<li><input type="checkbox" id="checkbox3"><label for="checkbox3">尝试用</label><code>hexo-blog-encrypt</code> 加密页面？</li>
+<li><input type="checkbox" id="checkbox4"><label for="checkbox4">直接在页面处添加一个在线输入框方便输入？</label></li>
+</ul>
+]]></content>
+      <categories>
+        <category>站点日志</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>博客折腾笔记⑤：修整、更新与展望</title>
+    <url>/posts/b1b3bd39.html</url>
+    <content><![CDATA[<p>真的好久没打理博客了。虽然偶尔也会在摸鱼的日子里想着 “稍微试着往那个吃灰的博客上写点东西吧”，但很快又把写博客这事给忘记了。终于在最近，我又提起了写博客的兴致，趁着刚好有空，着手把博客更新修整了一番。</p>
+<span id="more"></span>
+<h1 id="bo-ke-de-geng-xin-xiu-zheng">博客的更新修整</h1>
+<h2 id="bang-ding-yu-ming"><a class="header-anchor" href="#绑定域名"></a>绑定域名</h2>
+<p>这次折腾，干的第一件事就是给博客绑了个域名。</p>
+<p>一开始打算的是在腾讯云或者阿里云上随便注册一个便宜域名的，偶然发现还有一个契合我名字的创意域名 <code>jiml.ee</code> 可以注册。网上搜了一圈，<code>.ee</code> 后缀比较冷门，国内只有一个没听说过的注册商提供注册。价格虽然比腾讯云上的便宜域名贵些，但价格还可以接受。尽管<code>.ee</code> 现在没办法备案，作为 ccTLD 也有许多不稳定因素，但自己实在是太喜欢这个域名了，最后咬咬牙还是注册了 <code>jiml.ee</code> 这个域名。</p>
+<p>注册完域名，我把它挂到了 DnsPod 上解析。考虑到 Github Pages 在国内的访问并不理想，一开始打算托管到之前就用过的 Netlify 上绑域名。但实际体验下来，Netlify 目前在国内的打开速度实在不比 Github Pages 快多少，于是在一波寻找后，转用与 Netlify 相似，但国内访问更快的 Vercel 部署托管。虽然国内访问速度仍然谈不上多快，但已经比 Github Pages 上好上不少了。等以后经济充裕了，再考虑托管到国内的对象储存或者用七牛 / 又拍加速，弄个双线部署吧。</p>
+<h2 id="geng-xin-hexo-he-nex-t"><a class="header-anchor" href="#更新-Hexo-和-NexT"></a>更新 Hexo 和 NexT</h2>
+<p>许久不见，Hexo 的版本号已经来到了 5.0+，NexT 也已经更到了 8.2.1。</p>
+<p>5.0 的 Hexo 引入了独立的主题配置文件，新版本的 NexT 也提供了 <code>npm</code> 的安装方式，这比原来用 <code>git</code> 安装要方便可靠多了，备份好旧有主题配置后果断用 <code>npm</code> 重装 NexT。</p>
+<p>之后就是对着最新的主题配置文件合并原有主题设置了。在重新配置主题的过程中，还顺带启用了 Pangu 和 Quicklink。</p>
+<h2 id="qian-yi-ping-lun-xi-tong-zhi-twikoo"><a class="header-anchor" href="#迁移评论系统至-Twikoo"></a>迁移评论系统至 Twikoo</h2>
+<p>了解到旧有评论系统 Valine 存在的安全问题，把博客的评论系统迁移到了 <a href="https://twikoo.js.org/">Twikoo</a> 上，在引入 Akismet 反垃圾服务的同时配置了博客评论的邮件提醒。</p>
+<h2 id="xin-de-cha-jian"><a class="header-anchor" href="#新的插件"></a>新的插件</h2>
+<ul>
+<li><code>hexo-excerpt</code>：从 v7.6.0 开始 NexT 移除了主题自带的文章摘要折叠。参照指南，安装这个插件实现自动折叠功能。</li>
+<li><code>markdown-it-named-headings</code>：解决 <code>hexo-renderer-markdown-it</code> 在 NexT 上 TOC 显示异常的问题。</li>
+<li>更新 <code>hexo-blog-encrypt</code>：现在可以设置加密特定标签的页面了。</li>
+</ul>
+<h2 id="yi-chu-ge-ren-dong-tai-jie-mian-i-m"><a class="header-anchor" href="#移除个人动态界面-iM"></a>移除个人动态界面 iM</h2>
+<p>尽管先前我在安卓上设法制作了一个发送动态的 Tasker 工程，但由于其使用上仍存在各种不便与问题，我逐渐地不再使用它记录个人动态了。</p>
+<p>如果你对制作一个个人动态页面感兴趣，不妨试试这些项目：</p>
+<ul>
+<li>
+<p><a href="https://bb.js.org/">BBtalk 中文文档</a></p>
+</li>
+<li>
+<p><a href="https://artitalk.js.org/">Artitalk.js</a></p>
+</li>
+</ul>
+<blockquote>
+<p>现在，我主要使用 <a href="https://flomo.app">浮墨笔记 Flomo</a> 记录每天的琐碎想法。首先，它更隐秘，只有自己可见；同时，它基于 PWA，在各个平台只需浏览器就能方便的发送内容，还能通过微信公众号随时发送想法；在内容上，它支持插入图片、插入列表、简单地加粗或添加下划线，同时能够加入标签，通过标签组织管理起自己的所思所想…… 这些闪光点是我选择它的原因 —— 它真的完美满足了目前的我对自我记录的所有需求。<br>
+最重要的是，上面的这些功能都是免费的！付费开通会员后，你还能享受每日回顾、随机漫步、API、数据导出等附加功能。如果你对它感兴趣，不妨通过我的<a href="https://flomoapp.com/register2/?MzIwMjA">邀请链接</a>试试看！</p>
+</blockquote>
+<h2 id="xin-zeng-ye-mian"><a class="header-anchor" href="#新增页面"></a>新增页面</h2>
+<p>既然都挂了域名了，博客也自然得正式点了。</p>
+<ul>
+<li><strong><a href="/about">关于</a></strong>：作为个人站点，一个简短的自我介绍还是要有的。😆</li>
+<li><strong><a href="/guestbook">留言</a></strong>：有什么想说的，欢迎在这里留言！🍻</li>
+</ul>
+<h1 id="zhan-wang">展望</h1>
+<p>过去的一年里经历了太多太多。回顾我跌宕起伏的 2020，愈发觉得自己需要进行更多的记录与写作。在新的一年里，我打算好好地在博客上写些东西，内容也不会再局限于先前简单的折腾笔记，从今往后还会发自己的作品、一些思考见解，以及更生活化的个人记录。</p>
+<p>无论如何，不能再让折腾了这么久的博客吃灰了，希望新的一年里我不会再咕咕咕下去吧！</p>
+<p>你好，2021！你好，<a href="jiml.ee">jiml.ee</a>！</p>
+]]></content>
+      <categories>
+        <category>站点日志</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 watchtower 自动更新 Docker 容器的镜像</title>
+    <url>/posts/5770fa20.html</url>
+    <content><![CDATA[<p>本文以在群晖下，使用 docker compose 部署为例：</p>
+<ol>
+<li>
+<p>在 <code>docker</code> 文件夹下，新建文件夹 <code>watchtower</code></p>
+</li>
+<li>
+<p>创建文件 <code>docker-compose.yml</code>，内容如下，根据需要修改参数：</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">WATCHTOWER_CLEANUP=true</span>      <span class="comment"># 更新后移除旧的镜像</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">WATCHTOWER_SCHEDULE=0</span> <span class="number">0</span> <span class="number">7</span> <span class="string">*</span> <span class="string">*</span> <span class="string">*</span>      <span class="comment"># 设置 cron 定时任务</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>更多配置项及其环境变量，请参考<a href="https://containrrr.dev/watchtower/arguments/">官方文档</a></p>
+</blockquote>
+<p>将文件保存到刚才创建的 <code>docker/watchtower</code> 文件夹里</p>
+</li>
+<li>
+<p>SSH 连接群晖，挂载到 <code>docker/watchtower</code>，执行命令</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></tbody></table></figure>
+<p>容器启动后，将按照设定自动检查更新。如检测到某容器的镜像有更新，将下载最新镜像，并自动重启该容器。</p>
+</li>
+</ol>
+<hr>
+<p><strong>Q</strong>：我不想某容器被 watchtower 自动更新重启，应该怎么做？</p>
+<p><strong>A</strong>：在容器运行时添加 Label  <code>com.centurylinklabs.watchtower.enable=false</code> 即可。请参见<a href="https://containrrr.dev/watchtower/container-selection/">官方文档介绍</a>。</p>
+<p>这里提供一个 <code>docker-compose.yml</code> 的例子：</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">qbittorrent:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">qbittorrent</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">linuxserver/qbittorrent</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">com.centurylinklabs.watchtower.enable=false</span></span><br></pre></td></tr></tbody></table></figure>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>群晖</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Markdown 语法学习笔记①</title>
+    <url>/posts/6c2e314d.html</url>
+    <content><![CDATA[<h2 id="biao-ti"><a class="header-anchor" href="#标题"></a>标题</h2>
+<p>两种语法，分别为类 Setext 和类 atx 形式。</p>
+<h3 id="lei-setext-shi"><a class="header-anchor" href="#类-Setext-式"></a>类 Setext 式</h3>
+<p>利用 <code>=</code> 和 <code>-</code>：</p>
+<pre><code>标题
+=====
+标题
+-----
+</code></pre>
+<h3 id="lei-atx-shi"><a class="header-anchor" href="#类-atx-式"></a>类 atx 式</h3>
+<p>在行首插入 1 到 6 个<code>#</code>, 对应到标题 1 到 6 阶。</p>
+<pre><code># 标题
+## 标题
+### 标题
+#### 标题
+##### 标题
+###### 标题
+</code></pre>
+<p>也可以</p>
+<pre><code># 标题 #
+## 标题 ##
+### 标题 ###  
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 不要忘记<code>#</code>与标题文字间的空格<br>
+错误示范：<code>##标题</code></p>
+</blockquote>
+<span id="more"></span>
+<h2 id="qu-kuai-yin-yong"><a class="header-anchor" href="#区块引用"></a>区块引用</h2>
+<p>使用 <code>&gt;</code></p>
+<pre><code>&gt; 一些文字
+</code></pre>
+<p>只需在每段第一行加上即可<br>
+还可以嵌套，只要根据层次加上不同数量的 <code>&gt;</code></p>
+<pre><code>&gt; 一些文字
+&gt;&gt; 一些一些文字
+</code></pre>
+<p>引用区域内可以使用其他 Markdown 语法：</p>
+<pre><code>&gt; ## 这是一个标题。
+&gt; 
+&gt; 1.   这是第一行列表项。
+&gt; 2.   这是第二行列表项。
+&gt; 
+&gt; 给出一些例子代码：
+&gt; 
+&gt;     return shell_exec("echo $input | $markdown_script");
+</code></pre>
+<h2 id="lie-biao"><a class="header-anchor" href="#列表"></a>列表</h2>
+<p>分为有序列表与无序列表。<br>
+如果列表项目间用空行分开，那么中间内容将不会被列表项包括在内。</p>
+<pre><code>* 列表项
+
+* 列表项
+</code></pre>
+<p>如果要在列表项目内放进引用，那 &gt; 就需要缩进</p>
+<pre><code>* 列表项
+    &gt; 引用
+</code></pre>
+<p>如果要放代码区块的话，该区块就需要缩进两次</p>
+<pre><code>* 列表项
+        &lt;codehere&gt;
+</code></pre>
+<h3 id="you-xu-lie-biao"><a class="header-anchor" href="#有序列表"></a>有序列表</h3>
+<p>使用 <code>*</code>,<code>+</code> 和 <code>-</code> 标记</p>
+<pre><code>* 列表项
++ 列表项
+- 列表项
+</code></pre>
+<h3 id="wu-xu-lie-biao"><a class="header-anchor" href="#无序列表"></a>无序列表</h3>
+<p>使用<strong>数字加英文句点<code>.</code> 的方式</strong></p>
+<pre><code>1. 列表项
+2. 列表项
+3. 列表项
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：</p>
+<ol>
+<li>在列表标记上使用的数字<strong>并不会影响</strong>输出的顺序<br>
+<s><em>简直智障福音啊</em></s></li>
+<li>文字出现数字 - 句点 - 空白而要避免列表项出现，可以在句点前加上<strong>反斜杠</strong><code>\</code><br>
+eg:<code>1986\. What a great season.</code></li>
+</ol>
+</blockquote>
+<h2 id="dai-ma-qu-kuai"><a class="header-anchor" href="#代码区块"></a>代码区块</h2>
+<p>只需简单地缩进一格（或四个空格）即可</p>
+<p>这是文字</p>
+<pre><code>这是代码
+</code></pre>
+<p>一个代码区块会一直持续到没有缩进的那一行（或是文件结尾）。</p>
+<p>同时，在代码区块中，一般的 Markdown 语法不会被转换。</p>
+<h2 id="fen-ge-xian"><a class="header-anchor" href="#分隔线"></a>分隔线</h2>
+<p>使用三个以上的 <code>*</code>、<code>-</code>、<code>_</code>来建立一个分隔线，可以在星号或是减号中间插入空格，但注意行内不能有其他东西</p>
+<pre><code>文字
+***
+
+文字
+---
+
+文字
+___
+
+文字
+- - -
+
+文字
+* * *
+</code></pre>
+<h2 id="lian-jie-cha-ru"><a class="header-anchor" href="#链接插入"></a>链接插入</h2>
+<p>Markdown 支持两种形式的链接语法： 行内式和参考式两种形式。<br>
+不管是哪一种，链接文字都是用 <code>[]</code> 来标记。</p>
+<h3 id="xing-nei-shi"><a class="header-anchor" href="#行内式"></a>行内式</h3>
+<p>使用方括号 <code>[]</code> 括住所需加链接的文字，并在后面以圆括号 <code>()</code> 形式插入链接（可以是相对路径）。<br>
+如需加入链接描述 (链接的 title 文字) 只需在圆括号中的链接后以 <code>""</code> 包起文字即可。</p>
+<pre><code>这是一个[链接](https://xsllen.tk)
+这是一个有名字的[链接](https://xsllen.tk "Jim's Blog")
+</code></pre>
+<h3 id="can-kao-shi"><a class="header-anchor" href="#参考式"></a>参考式</h3>
+<p>使用方括号 <code>[]</code> 括住所需加链接的文字，并在后面再接上一个方括号 <code>[]</code> 进行用于辨识链接的标记。<br>
+你也可以选择性地在两个方括号中间加上一个空格。</p>
+<pre><code>这是一个[链接][1]
+这是一个[链接] [1]
+</code></pre>
+<p>接着，在文件的任意处把标记的文章内容定义出来。<br>
+链接网址还可以使用尖括号包起。<br>
+网址之后可以选择接着网址描述（title）内容，可以用单引号、双引号或是括弧包着。<br>
+网址描述（title）内容可以放到下一行，也可以加缩进，好看就行。<s>（说得我闲得蛋疼一样）</s></p>
+<pre><code>[1]: https://xsllen.tk
+[1]: &lt;https://xsllen.tk&gt;
+[1]: https://xsllen.tk "My blog"
+[1]: https://xsllen.tk 'My blog'
+[1]: https://xsllen.tk (My blog)
+
+[1]: https://xsllen.tk 
+"My blog"
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong><br>
+1. 链接辨别标签可以有字母、数字、空白和标点符号，但是 ** 并不区分大小写！** 因此以下两个链接是相同的。</p>
+</blockquote>
+<pre><code>[link text][a]
+[link text][A]
+</code></pre>
+<blockquote>
+<p>2. 标记方括号内的内容可以省略（即后一个方括号为空），此时链接标记会视为等同于链接文字。</p>
+<p>[link][]<br>
+相当于<br>
+[link][link]</p>
+</blockquote>
+<p>参考式整体实例：</p>
+<pre><code>I get 10 times more traffic from [Google] [1] than from[Yahoo] [2] or [MSN] [3].
+
+[1]: http://google.com/        "Google"
+[2]: http://search.yahoo.com/  "Yahoo Search"
+[3]: http://search.msn.com/    "MSN Search"
+</code></pre>
+<p>如果改成用链接名称的方式写：</p>
+<pre><code>I get 10 times more traffic from [Google][] than from[Yahoo][] or [MSN][].
+
+[google]: http://google.com/        "Google"
+[yahoo]:  http://search.yahoo.com/  "Yahoo Search"
+[msn]:    http://search.msn.com/    "MSN Search"
+</code></pre>
+<h2 id="wen-zi-chu-li"><a class="header-anchor" href="#文字处理"></a>文字处理</h2>
+<h3 id="xie-ti"><a class="header-anchor" href="#斜体"></a>斜体</h3>
+<p>使用一个 <code>*</code> 或<code>_</code>符号将文字包围起来。</p>
+<pre><code>*斜体文字*
+_斜体文字_
+</code></pre>
+<h3 id="jia-cu"><a class="header-anchor" href="#加粗"></a>加粗</h3>
+<p>使用两个 <code>*</code> 或<code>_</code>符号将文字包围起来。</p>
+<pre><code>**加粗文字**
+__加粗文字__
+</code></pre>
+<h3 id="cu-xie-ti"><a class="header-anchor" href="#粗斜体"></a>粗斜体</h3>
+<p>使用三个 <code>*</code> 或<code>_</code>符号将文字包围起来。</p>
+<pre><code>***粗斜体文字***
+</code></pre>
+<h3 id="shan-chu-xian"><a class="header-anchor" href="#删除线"></a>删除线</h3>
+<p>使用两个 <code>~</code> 符号将文字包围起来。<br>
+<s>带删除线的文字</s></p>
+<h3 id="zhu-jiao"><a class="header-anchor" href="#注脚"></a>注脚</h3>
+<p>使用 <code>[^keyword]</code> 表示注脚，并在文本的任意地方对该注脚定义（类似与参考式）<br>
+示例：</p>
+<pre><code>这里有一个注脚[^footnote]。
+[^footnote]: 这是那个*注脚*的**文本**。
+</code></pre>
+<p>效果：</p>
+<p>这里有一个注脚 <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。</p>
+<blockquote>
+<p><strong>注意：</strong> 使用什么符号开启标签，就要用什么符号结束。</p>
+</blockquote>
+<h3 id="dai-ma-biao-ji"><a class="header-anchor" href="#代码标记"></a>代码标记</h3>
+<p>使用反引号 <code>`</code> 将代码文字包起.</p>
+<pre><code>`&lt;code&gt;code here!&lt;/code&gt;`
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong></p>
+<ul>
+<li>
+<p>如果要在代码区段内插入反引号，应使用<strong>多个反引号</strong>来开启和结束代码区段。</p>
+<pre><code>``code`code``
+</code></pre>
+</li>
+</ul>
+<p>代码区段的起始和结束端都可以<strong>放入一个空白</strong>，起始端后面一个，结束端前面一个，这样你就可以在区段的一开始就插入反引号.</p>
+<pre><code>  `` ` ``
+  `` code`code ``
+</code></pre>
+<ul>
+<li>在代码区段内，&amp; 和方括号都会被<strong>自动地转成 HTML 实体</strong>。</li>
+</ul>
+</blockquote>
+<h2 id="tu-pian-cha-ru"><a class="header-anchor" href="#图片插入"></a>图片插入</h2>
+<p>与链接插入类似，同样包括两种方式： 行内式与参考式。</p>
+<h3 id="xing-nei-shi-1"><a class="header-anchor" href="#行内式-2"></a>行内式</h3>
+<p>使用 <code>![alt text](图片网址)</code><br>
+还可以加上图片描述（title 文字）<br>
+<code>![alt text](图片网址 "描述文字")</code></p>
+<h3 id="can-kao-shi-1"><a class="header-anchor" href="#参考式-2"></a>参考式</h3>
+<p>使用 <code>![alt text][id]</code><br>
+「id」是图片参考的名称，图片参考的定义方式则和连结参考一样：</p>
+<pre><code>[id]: 图片路径 "描述文字"
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 到目前为止， Markdown 还没有办法指定图片的宽高，需要的话可使用普通的 <strong><code>&lt;img&gt;</code></strong> 标签</p>
+</blockquote>
+<h2 id="nei-rong-mu-lu-toc"><a class="header-anchor" href="#内容目录（TOC）"></a>内容目录（TOC）</h2>
+<p>在段落中填写 <code>[TOC]</code> 以显示全文内容的目录结构。</p>
+<p>效果：<br>
+[TOC]</p>
+<h2 id="biao-ge"><a class="header-anchor" href="#表格"></a>表格</h2>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">| 项目        | 价格   |  数量  |</span><br><span class="line">| --------   | -----:  | :----:  |</span><br><span class="line">| 计算机     | \$1600 |   5     |</span><br><span class="line">| 手机        |   \$12   |   12   |</span><br><span class="line">| 管线        |    \$1    |  234  |</span><br></pre></td></tr></tbody></table></figure>
+<p>效果：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th style="text-align:right">价格</th>
+<th style="text-align:center">数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>计算机</td>
+<td style="text-align:right"> $1600</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td> 手机</td>
+<td style="text-align:right"> $12</td>
+<td style="text-align:center">12</td>
+</tr>
+<tr>
+<td> 管线</td>
+<td style="text-align:right"> $1</td>
+<td style="text-align:center">234</td>
+</tr>
+</tbody>
+</table>
+<h2 id="dai-ban-shi-xiang-ji-todo-lie-biao"><a class="header-anchor" href="#待办事项及TODO列表"></a>待办事项及 TODO 列表</h2>
+<p>使用带有 <code>- [ ]</code>（未完成） 或 <code>- [x]</code>（已完成）项的列表语法撰写一个待办事宜列表，并且支持子列表嵌套以及混用 Markdown 语法。<br>
+示例：</p>
+<pre><code>- [ ] 写一个个人主页
+- [x] 写一个Maekdown学习笔记$$
+</code></pre>
+<p>效果：</p>
+<ul>
+<li><input type="checkbox" id="checkbox5"><label for="checkbox5">写一个个人主页</label></li>
+<li><input type="checkbox" id="checkbox6" checked="true"><label for="checkbox6">写一个 Maekdown 学习笔记</label></li>
+</ul>
+<h2 id="zi-dong-lian-jie"><a class="header-anchor" href="#自动链接"></a>自动链接</h2>
+<p>Markdown 支持以比较简短的自动链接形式来处理网址和电子邮件信箱，只需用方括号括起即可，Markdown 就会自动把它转成链接。</p>
+<pre><code>&lt;http://example.com/&gt;
+&lt;address@example.com&gt;
+</code></pre>
+<p>效果：<br>
+<a href="http://example.com/">http://example.com/</a><br>
+<a href="mailto:address@example.com">address@example.com</a></p>
+<h2 id="fan-xie-gang-yong-fa"><a class="header-anchor" href="#反斜杠用法"></a>反斜杠用法</h2>
+<p>Markdown 可以利用反斜杠来插入一些在语法中有其它意义的符号，例如：如果你想要用星号加在文字旁边的方式来做出强调效果（但不用 <code>&lt;em&gt;</code> 标签），你可以在星号的前面加上反斜杠：</p>
+<pre><code>\*literal asterisks\*
+</code></pre>
+<p>Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的符号：</p>
+<pre><code>\   反斜线
+`   反引号
+*   星号
+_   底线
+{}  花括号
+[]  方括号
+()  括弧
+#   井字号
++   加号
+-   减号
+.   英文句点
+!   惊叹号
+</code></pre>
+<h2 id="html-jian-rong-xing"><a class="header-anchor" href="#HTML兼容性"></a>HTML 兼容性</h2>
+<ol>
+<li>Markdown 文档内可任意使用 html 语句。<br>
+（你想在 Markdown 文档里码 HTML 也没问题的 233）</li>
+<li>Markdown 文档会对特殊字符自动转换，如 <code>&lt;</code> 和 <code>&amp;</code>。</li>
+</ol>
+<h2 id="wen-zhang-guo-chang-zhe-die-hexo-yong"><a class="header-anchor" href="#文章过长折叠-（hexo用）"></a>文章过长折叠 （hexo 用）</h2>
+<p>使用 <code>&lt;!--more--&gt;</code></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>这是那个<em>注脚</em>的<strong>文本</strong>。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 WSL 交叉编译 MentoHUST</title>
+    <url>/posts/4d028789.html</url>
+    <content><![CDATA[<p>为使得 MentoHUST 在路由器上依然可用，需要对 MentoHUST 针对自己路由器的芯片架构进行交叉编译。本文以使用 <strong>MT7620</strong> 的路由器平台为例，主要提供 WSL 下对 MentoHUST 进行交叉编译的实例。</p>
+<p>限于能力与水平，本文有许多遗漏与不足之处，还请多多指教。</p>
+<span id="more"></span>
+<h2 id="zhun-bei-gong-zuo"><a class="header-anchor" href="#准备工作"></a>准备工作</h2>
+<ul>
+<li>
+<p>一台已刷入 OpenWrt 的路由器</p>
+</li>
+<li>
+<p>已安装 Linux 系统的实体机或虚拟机 / 已安装 WSL 的 Windows 10</p>
+<blockquote>
+<p>如果你准备使用 WSL 进行编译，请先参考<a href="https://jiml.ee/posts/3a5c40a1.html">在 WSL2 上进行 OpenWrt 的编译</a>的 “配置编译环境” 进行 WSL 的相关设置。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="an-zhuang-xiang-guan-yi-lai"><a class="header-anchor" href="#安装相关依赖"></a>安装相关依赖</h3>
+<p>打开终端，输入：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install build-essential bison flex zlib1g-dev libncurses5-dev subversion quilt intltool ruby fastjar unzip gawk autogen autopoint ccache gettext libssl-dev xsltproc zip git</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="xia-zai-suo-xu-wen-jian"><a class="header-anchor" href="#下载所需文件"></a>下载所需文件</h3>
+<ol>
+<li>
+<p>在终端下前往 <code>home</code>，并创建目录 <code>mt7620</code> 以便组织管理文件。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/jim</span><br><span class="line"><span class="built_in">mkdir</span> mt7620</span><br><span class="line"><span class="built_in">cd</span> mt7620</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p><strong>目录请根据自己需要命名，这里仅作示范。</strong><br>
+<strong>其中 <code>jim</code> 为本示例中的 Linux 用户名，请根据自己的 Linux 用户名修改相关命令。</strong></p>
+</blockquote>
+</li>
+<li>
+<p>到 <a href="http://downloads.openwrt.org/">OpenWrt 的官网</a>下载对应你路由器的芯片和当前版本系统的交叉编译工具包 (SDK)。</p>
+<p>本指南使用 19.07.4 的 SDK</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">wget https://downloads.openwrt.org/releases/19.07.4/targets/ramips/mt7620/openwrt-sdk-19.07.4-ramips-mt7620_gcc-7.5.0_musl.Linux-x86_64.tar.xz -O sdk.tar.xz</span><br><span class="line">tar -xJf sdk.tar.xz</span><br><span class="line"><span class="built_in">mv</span> openwrt-sdk-19.07.4-ramips-mt7620_gcc-7.5.0_musl.Linux-x86_64 sdk</span><br><span class="line"><span class="built_in">rm</span> sdk.tar.xz</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>下载 libpcap 源码至 <code>libpcap</code> 文件夹，<a href="https://www.tcpdump.org/release/libpcap-1.9.1.tar.gz">撰文时最新为 1.9.1 版</a>。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">wget https://www.tcpdump.org/release/libpcap-1.9.1.tar.gz -O libpcap.tar.gz</span><br><span class="line">tar -xzf libpcap.tar.gz</span><br><span class="line"><span class="built_in">mv</span> libpcap-1.9.1 libpcap</span><br><span class="line"><span class="built_in">rm</span> libpcap.tar.gz</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>下载 MentoHUST 源码至 <code>mentohust</code> 文件夹。这里使用 <a href="https://github.com/hyrathb">@hyrathb</a> 的，请根据自己需要替换源码链接。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/hyrathb/mentohust.git mentohust</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<h2 id="jiao-cha-bian-yi"><a class="header-anchor" href="#交叉编译"></a>交叉编译</h2>
+<h3 id="pei-zhi-jiao-cha-bian-yi-huan-jing"><a class="header-anchor" href="#配置交叉编译环境"></a>配置交叉编译环境</h3>
+<p>终端输入：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">PATH=<span class="variable">$PATH</span>:/home/jim/mt7620/sdk/staging_dir/toolchain-mipsel_24kc_gcc-7.5.0_musl/bin</span><br><span class="line"><span class="built_in">export</span> PATH</span><br><span class="line">STAGING_DIR=/home/jim/mt7620/sdk/staging_dir/toolchain-mipsel_24kc_gcc-7.5.0_musl</span><br><span class="line"><span class="built_in">export</span> STAGING_DIR</span><br><span class="line"><span class="built_in">export</span> CC=mipsel-openwrt-linux-gcc</span><br><span class="line"><span class="built_in">export</span> CPP=mipsel-openwrt-linux-cpp</span><br><span class="line"><span class="built_in">export</span> GCC=mipsel-openwrt-linux-gcc</span><br><span class="line"><span class="built_in">export</span> CXX=mipsel-openwrt-linux-g++</span><br><span class="line"><span class="built_in">export</span> RANLIB=mipsel-openwrt-linux-musl-ranlib</span><br><span class="line"><span class="built_in">export</span> ac_cv_linux_vers=4.4.60</span><br><span class="line"><span class="built_in">export</span> LDFLAGS=<span class="string">"-static"</span></span><br><span class="line"><span class="built_in">export</span> CFLAGS=<span class="string">"-Os -s"</span></span><br></pre></td></tr></tbody></table></figure>
+<p><strong>请不要直接复制粘贴，需要针对你的实际情况进行修改。</strong></p>
+<p>需修改的地方（尖括号部分）有：</p>
+<ul>
+<li><code>PATH=$PATH:…/staging_dir/&lt;path&gt;/bin</code></li>
+<li><code>STAGING_DIR=…/staging_dir/&lt;path&gt;</code></li>
+<li><code>CC</code>、<code>CPP</code>、<code>GCC</code>、<code>CXX</code>、<code>RANLIB</code> 请对比参考<code>…/staging_dir/&lt;path&gt;/bin</code> 内的对应文件名进行修改</li>
+<li><strong><code>RANLIB</code> 要根据 <code>sdk</code> 里目录的结尾修改</strong>。这个例子，结尾是 <code>musl</code>，因此 <code>export RANLIB=mipsel-openwrt-linux-musl-ranlib</code>。如果你的结尾是 <code>uClibc</code>，就应该改成 <code>export RANLIB=mipsel-openwrt-linux-uclibc-ranlib</code>。</li>
+<li><code>ac_cv_linux_vers</code> 为你所编译目标 OpenWrt 当前 Linux 内核版本号</li>
+</ul>
+<h3 id="bian-yi-libpcap"><a class="header-anchor" href="#编译libpcap"></a>编译 libpcap</h3>
+<p>进入 <code>libpcap</code> 文件夹</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/jim/mt7620/libpcap</span><br></pre></td></tr></tbody></table></figure>
+<p>进行编译</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">./configure --host=mipsel-linux --prefix=/home/jim/mt7620/ --with-pcap=linux</span><br><span class="line">make</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>请不要直接复制粘贴，需要针对你的实际情况进行修改。</strong></p>
+<p>需修改的地方有：</p>
+<ul>
+<li><code>--host</code>，对应你的路由器芯片架构进行修改（<code>arm-linux</code>、<code>mipsel-linux</code>）</li>
+<li><code>--prefix</code>，换成你的路径</li>
+</ul>
+<p><code>./configure</code> 部分不应出错。</p>
+<p><code>make</code> 部分，<strong>只要看到 <code>ranlib libpcap.a</code> 没有出错即可</strong>，不用理会 <code>libpcap.so</code> 是否出错。</p>
+<p>完成后请查看你的 <code>libpcap</code> 目录下是否生成 <code>libpcap.a</code>。</p>
+<h3 id="bian-yi-mento-hust"><a class="header-anchor" href="#编译MentoHUST"></a>编译 MentoHUST</h3>
+<p>进入 <code>MentoHUST</code> 目录，生成 Makefile：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/jim/mt7620/mentohust</span><br><span class="line">sh autogen.sh</span><br></pre></td></tr></tbody></table></figure>
+<p>获取自己所在平台：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">./config.guess</span><br></pre></td></tr></tbody></table></figure>
+<p>输出的信息替换到下方代码的 <code>--build</code> 中，然后执行命令进行编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">./configure --build=x86_64-pc-linux-gnu --host=mipsel-linux   --disable-encodepass --disable-notify --with-pcap=/home/jim/mt7620/libpcap/libpcap.a</span><br><span class="line">make</span><br></pre></td></tr></tbody></table></figure>
+<p>其中 <code>--with-pca</code> 后内容请修改为自己的对应路径</p>
+<p>如果运行无误，完成后就可以在 <code>/home/jim/mt7620/mentohust/src</code> 中获取所需要的 <code>mentohust</code> 文件了，教程结束。</p>
+<h2 id="can-kao-wen-zhang"><a class="header-anchor" href="#参考文章"></a>参考文章</h2>
+<ul>
+<li><a href="https://github.com/KumaTea/MentoHUST-SYSU-Guide/blob/master/Guide.md">支持锐捷认证与 IPv6 的路由器配置指南：以 K2P 为例</a></li>
+<li><a href="https://blog.csdn.net/warriorpaw/article/details/7990226">交叉编译 mentohust 实现锐捷认证共享上网</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>OpenWrt</tag>
+        <tag>MentoHUST</tag>
+        <tag>路由器</tag>
+        <tag>WSL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MentoHUST 在 OpenWrt 上的配置</title>
+    <url>/posts/6f5f0d34.html</url>
+    <content><![CDATA[<h1 id="zhun-bei-gong-zuo">准备工作</h1>
+<ul>
+<li>一台刷好 OpenWrt 的路由器</li>
+<li>编译好的对应路由器架构的 <code>mentohust</code> 可执行文件 </li>
+<li><a href="https://winscp.net/eng/download.php">WinSCP</a></li>
+<li>SSH 工具（如 PuTTY、XShell、MobaXterm）</li>
+</ul>
+<span id="more"></span>
+<h1 id="xie-ru-bing-ce-shi-mento-hust">写入并测试 MentoHUST</h1>
+<p>使用 WinSCP 上传 <code>mentohust</code> 文件至路由器的 <code>/etc</code> 目录下。</p>
+<p>赋予 <code>mentohust</code> 文件可执行权限：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /etc/mentohust</span><br></pre></td></tr></tbody></table></figure>
+<p>测试 MentoHUST 是否可用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">/etc/mentohust -h</span><br></pre></td></tr></tbody></table></figure>
+<p>如输出无误，将输出帮助文档。</p>
+<h1 id="jin-xing-ren-zheng">进行认证</h1>
+<p>输入命令:</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">/etc/mentohust -u &lt;用户名&gt; -p &lt;密码&gt; -n &lt;wan口对应网卡&gt; -e 60 -d 1</span><br></pre></td></tr></tbody></table></figure>
+<p>其中，<code>-e</code> 与 <code>-d</code> 请根据自己学校实际情况修改，此处仅提供示例。</p>
+<p>输出显示成功后应该就能上网了，测试无问题后请先暂时按 <code>Ctrl</code>+<code>C</code> 退出程序，输入命令：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">/etc/mentohust -u &lt;用户名&gt; -p &lt;密码&gt; -n &lt;wan口对应网卡&gt; -e 60 -d 1 -b 3 -w</span><br></pre></td></tr></tbody></table></figure>
+<p>之后，MentoHUST 会以后台运行模式进行认证，并将日志输出到 <code>/tmp/mentohust.log</code> 下，同时将当前配置信息保存至 <code>/etc/mentohust.conf</code>。</p>
+<h1 id="she-zhi-kai-ji-zi-dong-ren-zheng">设置开机自动认证</h1>
+<ol>
+<li>
+<p>在 <code>/etc/init.d/</code> 下新建文件 <code>mentohust</code>，打开编辑，复制以下代码：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh /etc/rc.common</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Example script</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Copyright (C) 2007 OpenWrt.org</span></span><br><span class="line"> </span><br><span class="line">START=99</span><br><span class="line">STOP=15</span><br><span class="line"> </span><br><span class="line">start() {        </span><br><span class="line">   echo start</span><br><span class="line">   /etc/mentohust</span><br><span class="line">} </span><br><span class="line"></span><br><span class="line">stop() {        </span><br><span class="line">   echo stop</span><br><span class="line">   /etc/mentohust -k</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>保存后退出。</p>
+<p>你也可以在主机上预先创建好这一文件，在主机保存后使用 WinSCP 上传至路由器 <code>/etc/init.d/</code> 下</p>
+<blockquote>
+<p>请注意修改脚本文件的换行符为 LF</p>
+</blockquote>
+</li>
+<li>
+<p>赋予该脚本可执行权限：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> a+x /etc/init.d/mentohust</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>设置该脚本开机自启动</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">/etc/init.d/mentohust <span class="built_in">enable</span></span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<p>自此，路由器将会在每次开机时自动运行 MentoHUST 以进行认证。</p>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>OpenWrt</tag>
+        <tag>MentoHUST</tag>
+        <tag>路由器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编译适用于 X86 的 MentoHUST</title>
+    <url>/posts/5ed2bcfa.html</url>
+    <content><![CDATA[<h1 id="zhun-bei-gong-zuo">准备工作</h1>
+<p>以下所以操作都基于 <code>/home</code> 进行，用户名为 <code>jim</code>。</p>
+<h2 id="an-zhuang-xiang-guan-yi-lai"><a class="header-anchor" href="#安装相关依赖"></a>安装相关依赖</h2>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install build-essential bison flex zlib1g-dev libncurses5-dev subversion quilt intltool ruby fastjar unzip gawk autogen autopoint ccache gettext libssl-dev xsltproc zip git</span><br></pre></td></tr></tbody></table></figure>
+<span id="more"></span>
+<h2 id="huo-qu-libpcab-yuan-ma"><a class="header-anchor" href="#获取libpcab源码"></a>获取 libpcab 源码</h2>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">wget https://www.tcpdump.org/release/libpcap-1.9.1.tar.gz -O libpcap.tar.gz</span><br><span class="line">tar -xzf libpcap.tar.gz</span><br><span class="line"><span class="built_in">mv</span> libpcap-1.9.1 libpcap</span><br><span class="line"><span class="built_in">rm</span> libpcap.tar.gz</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="huo-qu-mento-hust-yuan-ma"><a class="header-anchor" href="#获取MentoHUST源码"></a>获取 MentoHUST 源码</h2>
+<p>以 <a href="https://github.com/hyrathb">@hyrathb</a> 的 <a href="https://github.com/hyrathb/mentohust">MentoHUST</a> 为例：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/hyrathb/mentohust.git mentohust</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="jin-xing-bian-yi">进行编译</h1>
+<h2 id="bian-yi-libpcab"><a class="header-anchor" href="#编译libpcab"></a>编译 libpcab</h2>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> libpcap</span><br><span class="line">./configure --prefix=/home --with-pcap=linux</span><br><span class="line">make</span><br></pre></td></tr></tbody></table></figure>
+<p><code>make</code> 部分，<strong>只要看到 <code>ranlib libpcap.a</code> 没有出错即可</strong>，不用理会 <code>libpcap.so</code> 是否出错。</p>
+<p>完成后，应能在 <code>/home/libpcap</code> 下看到 <code>libpcap.a</code>。</p>
+<h2 id="bian-yi-mento-hust"><a class="header-anchor" href="#编译MentoHUST"></a>编译 MentoHUST</h2>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> mentohust</span><br><span class="line">sh autogen.sh</span><br><span class="line">./configure --disable-encodepass --disable-notify --with-pcap=/home/jim/libpcap/libpcap.a</span><br><span class="line">make</span><br></pre></td></tr></tbody></table></figure>
+<p>执行成功后即可在 <code>/home/mentohust/src</code> 下获取到所需的 <code>mentohust</code> 二进制文件了。</p>
+<h1 id="can-kao-wen-zhang">参考文章</h1>
+<ul>
+<li><a href="https://github.com/KumaTea/MentoHUST-SYSU-Guide/blob/master/Guide.md">支持锐捷认证与 IPv6 的路由器配置指南：以 K2P 为例</a></li>
+<li><a href="https://blog.csdn.net/warriorpaw/article/details/7990226">交叉编译 mentohust 实现锐捷认证共享上网</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>MentoHUST</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘</title>
+    <url>/posts/2af4a4f4.html</url>
+    <content><![CDATA[<blockquote>
+<p><strong>写在前面</strong>：本文大量复制和借鉴了<a href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=410612&amp;extra=page%3D1">无忧启动论坛 @ddsony 的教程内容</a>，没有他的帖子就没有我的这篇折腾笔记，十分感谢他帖子的详细指引！</p>
+</blockquote>
+<p>手上有一块闲置 SSD（建兴 T9，128G），想将它利用上来做一块多合一移动系统盘方便随身应急使用。</p>
+<p>上网冲浪偶然发现还有系统 All in One 移动硬盘的玩法，于是打算折腾一下</p>
+<span id="more"></span>
+<h1 id="shi-xian-mu-biao">实现目标</h1>
+<ol>
+<li>同时兼容 UEFI 和 Legacy 启动</li>
+<li>隐藏系统分区和启动分区，可以当作普通移动硬盘使用</li>
+<li> WTG</li>
+<li>Linux（这里使用 Ubuntu）</li>
+<li>WIN PE（这里使用 <a href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=349965&amp;extra=page%3D1">chiannet 制作的 USBOS V3</a>）</li>
+</ol>
+<h1 id="zhi-zuo-guo-cheng">制作过程</h1>
+<h2 id="zhun-bei-zi-liao"><a class="header-anchor" href="#准备资料"></a>准备资料</h2>
+<p>一个移动硬盘 / U 盘（固态 U 盘或者 WTG 认证 U 盘），用来安装</p>
+<p>另一个空白 U 盘，大小最好 4G 以上，用作装 Linux 的启动盘</p>
+<p>我整理的<a href="http://www.filedropper.com/200326wtg">资料包</a></p>
+<p><strong>镜像</strong>：</p>
+<p>Ubuntu</p>
+<p>Win10 使用官方 1909</p>
+<p><a href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=349965&amp;extra=page%3D1">chiannet 制作的 USBOS V3</a></p>
+<p><strong>软件</strong>：</p>
+<p><a href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=330493&amp;extra=page%3D1">MBROSTool</a> 本文主要工具</p>
+<p><a href="https://msfn.org/board/topic/149612-winntsetup-v40/">WinNTSetup</a> 安装 WTG 用</p>
+<p><a href="https://china.paragon-software.com/home-windows/extfs-for-windows-download">ExtFS for Windows</a> 在 windows 下读写 ext4 的分区，10 天免费试用，到期后限制向 Ext4 分区读写的性能。</p>
+<h1 id="an-zhuang-liu-cheng">安装流程</h1>
+<h2 id="chu-li-ying-pan-fen-qu-amp-an-zhuang-pe"><a class="header-anchor" href="#处理硬盘分区-安装PE"></a>处理硬盘分区 &amp; 安装 PE</h2>
+<ol>
+<li>连接移动硬盘，打开 MBROSTool，在<code>选项</code>中把<code>显示所有磁盘</code>打勾</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/HnZ7LIJ2zmXqlkG.jpg" alt=""></p>
+<p>然后在下方<strong>磁盘</strong>处选择要制作的移动硬盘</p>
+<p><img data-src="https://i.loli.net/2020/03/22/isE1Y6TbAjS52WF.jpg" alt=""></p>
+<p>打开<code>选项</code> - <code>格式化</code>，按如下设置</p>
+<p><img data-src="https://i.loli.net/2020/03/22/lkB3tf7AjQchY8M.jpg" alt=""></p>
+<p>右上角下拉栏选 3 个分区</p>
+<p>50G 用作 WTG 的 win10，选择 <code>VHD</code>，暂时空着路径信息</p>
+<p>50G 用作 Linux，选择 <code>VHD</code>，同样暂时空着路径信息</p>
+<blockquote>
+<p>下文步骤 4Winntsetup 安装结束后，由于是空分区，软件默认不在启动菜单里显示 WTG 菜单项标题，必须修改 “多 UDm 菜单 " 才能显示，修改方法见下文</p>
+</blockquote>
+<p>直接拖入 PE 的镜像文件到分区 3 的路径输入处，选择 “解开”，然后分区大小扩容到 1G（1024M）用作 PE</p>
+<p>右下方<code>用户区</code>打勾，剩余的容量将作为普通的移动硬盘使用</p>
+<p>左下方<code>重建分区表</code>打勾</p>
+<p>其他设置默认，随后点击最下方<code>格式化</code></p>
+<p>在格式化完成的同时，PE 也一并安装好了</p>
+<ol start="2">
+<li>回到主界面，点击<code>高级</code> - <code>备份到MOS</code>，备份 U 盘前 8M 到 BACK.MOS，备份默认保存在 MBROSTool 软件目录下，这个东西留着备用</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/26/K3G9DU7xYlLCIqs.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<ol start="3">
+<li>回到主界面去掉<code>只读</code>的勾选，列表框选择第二分区来挂写子盘</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/ngvmLEZDayrKMph.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>挂载后打开子盘 <code>/udm/udmsmenu.sh</code>，找到如图所示位置，去掉 #defudmmenu 1 和 #defudmmenu 2 两行前面的<code>#</code>（去除注释），并且顺手改掉后面的 <code>""</code> 里面的内容</p>
+<p>比如这里，前面格式化的时候把分区 1 作为 WTG 用的 Win10 盘，分区 2 作为 Deepin 用的盘，这里就改成了</p>
+<p><img data-src="https://i.loli.net/2020/03/22/m3vwcbkXaJjN81E.jpg" alt=""></p>
+<p>修改完后<strong>记得保存</strong></p>
+<p>同样的方法修改 <code>/EFI/mbrosefis.cfg</code></p>
+<p><img data-src="https://i.loli.net/2020/03/22/H7mduOlVr8XBYRC.jpg" alt=""></p>
+<p>到这里硬盘就处理好了，下面我们来进行 WTG 的安装</p>
+<blockquote>
+<p>删掉子盘 <code>/udm/pic/bubble.png</code> 可以关闭掉 MBR 引导时菜单的泡泡动画</p>
+</blockquote>
+<h2 id="wtg-an-zhuang"><a class="header-anchor" href="#WTG安装"></a>WTG 安装</h2>
+<ol>
+<li>回到主界面，打开<code>高级</code> -<code>BootICE</code> 按下图操作</li>
+</ol>
+<p><img data-src="http://bbs.wuyou.net/forum.php?mod=attachment&amp;aid=NDAzMTk5fGY5Zjg5OGY0fDE1ODQ4NzUyODJ8MHw0MTA2MTI%3D.jpg" alt="图片来自 无忧启动论坛@ddsony"></p>
+<ol start="2">
+<li>回到主界面，点击<code>常用</code> - <code>加载</code>，选择刚才分出的 50G 的 VHD 分区，点<code>高级</code>再点击<code>分区表加载</code></li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/BN63XmOeJEu1CIK.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/23/r18XKPVSNne6FlT.jpg" alt="批注 2020-03-23 000143"></p>
+<ol start="3">
+<li>点击’高级’-‘分区管理’，去掉用户区 MBSuDATA 的激活状态，同时激活安装分区；</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/5PkG6nXdWiFLSzc.jpg" alt=""></p>
+<p>如图，<strong>如果安装分区类型不是 0x07 的话，选中后点 <code>修改</code>，把分区类型改为 0x07。如果以后又卸载再重新挂载的，仍旧要改</strong></p>
+<p><img data-src="https://i.loli.net/2020/03/22/317z8pCDfvBFP6A.jpg" alt=""></p>
+<ol start="4">
+<li>打开 WinNTSetup，填好安装源路径和其他信息，<strong>引导驱动器和安装磁盘的位置是同一个，即上面分区表加载的要安装 WTG 的分区</strong>，先点 <code>F</code> 格式化一遍，再点<code>开始安装</code>，弹出的窗口选择默认的<code>使用bootsect.exe更新启动代码</code>，然后点确认</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/5qYdNFrJgHBK6tk.png" alt=""></p>
+<p>WinNtSetup 安装完成后，提示系统重启时以 BIOS 方式重启；</p>
+<ol start="5">
+<li>
+<p>安装完成后，提示系统重启。重启时再引导界面选择移动硬盘引导，重启到到 “多 UDm 菜单”，点击 WTG 启动菜单项。</p>
+<p>等待 WTG 系统配置好设备信息，还有一次重启，同样重启到 “多 UDm 菜单”，点击 WTG 启动菜单项，一直到 WTG 安装完毕进入桌面；</p>
+<p>进入桌面后进行系统激活，然后重启回到本机系统</p>
+</li>
+<li>
+<p>**（可选，非必要）** 打开 MBROSTool 工具文件夹下的 ghost32w.exe 进行 GHOST 备份</p>
+</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/WtZibO4v8eh6xVB.jpg" alt="打开程序"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/wYuzkZy9Wa1EtjD.jpg" alt="选择移动硬盘"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/fdcOSHC2x3ojql1.jpg" alt="选择WTG的分区（这里是第一个）"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/qnUDYMtmdL3Hfuv.jpg" alt="选择备份文件保存位置，路径最好不要有中文"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/ReQ3kVxFyKvb1H2.jpg" alt="是否压缩备份文件以及压缩的级别"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/vGLAyWmXrdx3c4S.jpg" alt="选Yes"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/nVgryOEWjHKcCvF.jpg" alt="选 Force lock"></p>
+<p>以后 WTG 的系统如果坏了，就可以再用工具<code>分区表加载</code>同一个分区，用 GHOST 恢复文件到安装分区后再进行以下的步骤就能轻松修复。</p>
+<ol start="7">
+<li>打开 MBROStool，先参照准备工作中的步骤 1 切换<code>磁盘</code>到当前的移动硬盘，然后参照下图深度卸载掉 WTG 的安装分区，这样就隐藏好安装分区了</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/i4hkVUXy92Trd5l.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/qNVopv2tZI85Uji.jpg" alt=""></p>
+<ol start="8">
+<li>如图所示恢复一开始备份的 MOS</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/XEc8UQGbLwivfjd.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/M4PUgAHlTz9LnDu.jpg" alt=""></p>
+<p>然后点<code>高级</code> - <code>分区管理</code>，恢复原来用户区 MBSuDATA 的激活状态（有些古怪电脑用户区不激活就无法启动）；<br>
+9. 软件右上角去掉只读，点旁边 UDm 下拉列表框选择挂载 WTG 的安装分区；<br>
+挂载后软件界面右键该分区，菜单选择<code>快启处理</code>。生成完毕后，WTG 就算装好了。</p>
+<p><img data-src="https://i.loli.net/2020/03/22/7siFg6tXCfV3hWR.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/TWyQAiCR69jhakY.jpg" alt=""></p>
+<h2 id="linux-de-an-zhuang-ubuntu-deepin-deng-debian-xi-fa-xing-ban"><a class="header-anchor" href="#Linux的安装（Ubuntu、Deepin等Debian系发行版）"></a>Linux 的安装（Ubuntu、Deepin 等 Debian 系发行版）</h2>
+<h3 id="an-zhuang-xi-tong-jing-xiang-yi-deepin-wei-li"><a class="header-anchor" href="#安装系统镜像（以Deepin为例）"></a>安装系统镜像（以 Deepin 为例）</h3>
+<ol>
+<li>
+<p>保险起见，再备份一次 MOS</p>
+<p><img data-src="https://i.loli.net/2020/03/26/K3G9DU7xYlLCIqs.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+</li>
+<li>
+<p>挂载 Linux 的安装分区</p>
+<p><img data-src="https://i.loli.net/2020/03/22/BN63XmOeJEu1CIK.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/mZuNJdMtTYX67BF.jpg" alt=""></p>
+</li>
+<li>
+<p>拿出另一个 U 盘，用 Easy2Boot 制作 ISO 启动盘。如图：</p>
+<p><img data-src="https://i.loli.net/2020/03/23/iZlh23pbjLTED4N.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>制作完成后，在_ISO\Linux\ 目录下拷入 Deepin 的镜像文件：</p>
+<p><img data-src="https://i.loli.net/2020/03/23/Wm6YpdiDvHRGSNZ.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>关机，重启引导进入 U 盘，选 <code>Linux</code> 菜单项进入，再选择你的镜像启动 ISO：</p>
+<p><img data-src="https://i.loli.net/2020/03/23/m39xOZRjiQ8yLgo.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p><img data-src="https://i.loli.net/2020/03/23/Z1OEqGyldkAWiC3.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p><img data-src="https://i.loli.net/2020/03/23/ltfHSXCrbL3RkuN.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p><img data-src="https://i.loli.net/2020/03/23/35GVbgo4fTwRhxD.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>进入安装界面，跟着安装流程走就好。</p>
+<p>需要注意的是，在选择安装位置的页面，我们需要选择选择<code>高级安装</code>，找到上文事先分挂载好的安装分区，点击设定其文件系统为 <code>ext4</code>、挂载点为 <code>\</code>。</p>
+<p>我们还需要点击左下角<code>修改引导器</code>，把引导器也同样设为这个分区，之后就可以点击<code>安装</code>了。</p>
+<p>选择界面如图所示</p>
+<p><img data-src="https://i.loli.net/2020/03/23/4zNLJWTtBo6kFwx.png" alt="以Deepin为例"></p>
+</li>
+<li>
+<p>安装完成后，系统将会自动重启。我们回到本机系统。</p>
+<p>如果你已经装好 <a href="https://china.paragon-software.com/home-windows/extfs-for-windows-download">ExtFS for Windows</a> 的话，我们应该就能看到刚安装完 deepin 的分区了</p>
+<blockquote>
+<p>如果你不想安装这个软件，你还可以在刚才用来装 Linux 镜像的 LU 盘里操作（进试用）</p>
+</blockquote>
+<p>我们打开这个分区，复制 <code>Ubuntu-UDm深隐资料包</code>里的 <code>grldr</code> 文件和 <code>/efi</code> 文件夹到根目录。</p>
+<p>然后打开 <code>/boot/grub</code> ，将下面的 <code>/grub.cfg</code> 复制到 根目录的 <code>/efi</code> 下，并更名为 <code>mbrosefi_qk.menu.cfg</code></p>
+<blockquote>
+<p>需要注意的是，工具内原有提供的 <code>grldr</code>、<code>/efi/boot/bootia32</code> 和 <code>/efi/boot/bootia32</code> 存在问题，我这里使用工具提供的文件无法正常启动 Linux。</p>
+<p>我已经在自行打包的 <code>Ubuntu-UDm深潜资料包</code>中提供了我个人使用后成功安装 Ubuntu 的替换文件。其他发行版可以自行尝试使用。</p>
+</blockquote>
+</li>
+<li>
+<p>我们打开更名好的 <code>mbrosefi_qk.menu.cfg</code>，按照以下规则对其进行修改</p>
+<ul>
+<li>在所有 <code>set root='hdX,msdosY' </code>（X,Y 代表数字）类似的行 的前面加上 #注释掉，或者直接删掉该行</li>
+</ul>
+<p><img data-src="https://i.loli.net/2020/03/23/Fn7q9IKsLkCVJzR.jpg" alt=""></p>
+<ul>
+<li>所有以 <code>linux</code> 开始的行，须在该行代码末尾添加<code>空格 + $udmboot</code>。</li>
+</ul>
+<p><img data-src="https://i.loli.net/2020/03/23/c4Ga8btdr1AFWKU.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/23/aG1Z6qCvtjh5PcR.jpg" alt=""></p>
+<ul>
+<li><code>linux  /boot/vmlinuz-...</code>、<code>initrd  /boot/initrd....</code> 和 <code>loadfont /boot/...</code> 等开始的行，需要在 <code>/boot</code> 字段前加入<code> ($rooti)</code> 字段。</li>
+</ul>
+<p><img data-src="https://i.loli.net/2020/03/23/4YpeKjR2yOntQk5.jpg" alt=""></p>
+   <center>↓↓↓↓↓↓↓↓↓↓↓↓</center>
+<p><img data-src="https://i.loli.net/2020/03/23/DPIyh4dCwKmFUta.jpg" alt=""></p>
+</li>
+<li>
+<p>打开资料包中的 <code>menu.lst</code> 和 <code>menu0.lst</code>，对照着刚刚修改的 <code>/efi/mbrosefi_qk.menu.cfg</code> 里的信息对 <code>menu.lst</code> 和 <code>menu0.lst</code> 进行以下修改</p>
+<ul>
+<li>
+<p>把 <code>menu.lst</code> 和 <code>menu0.lst</code> 里所有的 ``–set=root <code>后面的一大串数字（UUID）全部修改为</code> /efi/mbrosefi_qk.menu.cfg <code>里</code> root=UUID=` 后面的一大串数字</p>
+<p><img data-src="https://i.loli.net/2020/03/23/nd9U5ItyMCrNZk3.jpg" alt="这样的一串数字"></p>
+<p>然后，修改以下内容：</p>
+</li>
+<li>
+<p>修改 <code>menu.lst</code> 和 <code>menu0.lst</code> 里所有的内核版本号数字为 <code>/efi/mbrosefi_qk.menu.cfg</code> 里的内核版本号数字</p>
+<p><img data-src="https://i.loli.net/2020/03/25/FYjGlzPWL3I1bwT.png" alt="/efi/mbrosefi_qk.menu.cfg 里的内核版本号数字"></p>
+<p><img data-src="https://i.loli.net/2020/03/25/sgKUm7TQ9V8W4lB.png" alt="要修改的 menu.lst 和 menu0.lst 里的内核版本号"></p>
+<p>完成后保存并复制到 Linux 的安装分区根目录 <code>/</code></p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="she-zhi-shen-du-yin-cang"><a class="header-anchor" href="#设置深度隐藏"></a>设置深度隐藏</h3>
+<ol>
+<li>
+<p>重启电脑，用 MBR 或 UEFI 引导移动硬盘进入 UDm 菜单，然后尝试进入安装好的 Linux。</p>
+</li>
+<li>
+<p>如果 Linux 能正常启动，在简单配置 Linux 后重启回到主机系统，把 <code>udm</code> 和 <code>UDm-hook.sh</code> 复制到 移动硬盘普通储存区或另一个 U 盘，然后重启到 Linux 按步骤进行以下修改：</p>
+<ol>
+<li>复制 <code>udm</code> 到 <code>/usr/bin</code></li>
+<li>在 <code>/etc/initramfs-tools/hooks</code> 下新建脚本 <code>UDm-hook.sh</code>（名字可随意），代码如下：</li>
+</ol>
+<figure class="highlight sh"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">  PREREQ=<span class="string">""</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">prereqs</span></span>()</span><br><span class="line">  {</span><br><span class="line">          <span class="built_in">echo</span> <span class="string">"<span class="variable">$PREREQ</span>"</span></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line">  <span class="comment"># get pre-requisites</span></span><br><span class="line">  prereqs)</span><br><span class="line">          prereqs</span><br><span class="line">          <span class="built_in">exit</span> 0</span><br><span class="line">          ;;</span><br><span class="line">  <span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line">. /usr/share/initramfs-tools/hook-functions</span><br><span class="line"></span><br><span class="line">copy_exec /usr/bin/udm /bin</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如果你找不到 <code>/etc/initramfs-tools</code>，请先安装工具</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> apt-get install initramfs-tools</span><br></pre></td></tr></tbody></table></figure>
+</blockquote>
+<ol start="3">
+<li>编辑 <code>/usr/initramfas-tools/init</code>，</li>
+</ol>
+<p>在打开的文档中寻找 <code>run_scripts /scripts/init-top </code>一行，并在该行代码下新增两条代码</p>
+ <figure class="highlight sh"><table><tbody><tr><td class="code"><pre><span class="line">udmboot=`udm 2&gt;/dev/null`; udmdev=`<span class="built_in">echo</span> <span class="variable">$udmboot</span> | <span class="built_in">cut</span> -d<span class="string">" "</span> -f1`; udmroot=`<span class="built_in">echo</span> <span class="variable">$udmboot</span> | <span class="built_in">cut</span> -d<span class="string">" "</span> -f2`</span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">${udmdev}</span>"</span> ]; <span class="keyword">then</span> ROOT=<span class="variable">${udmdev}</span>; umount <span class="variable">${udmdev}</span> 2&gt;/dev/null;<span class="keyword">fi</span></span><br></pre></td></tr></tbody></table></figure>
+<p>然后保存。</p>
+<ol start="4">
+<li>
+<p>打开终端，运行</p>
+<p>完成后重启回本机系统</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> update-initramfs -u</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>打开 <code>MBMBROSTool</code> 工具，跟刚才一样深度卸载掉 Linux 的安装分区</p>
+<p><img data-src="https://i.loli.net/2020/03/22/i4hkVUXy92Trd5l.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/qNVopv2tZI85Uji.jpg" alt=""></p>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>注意：不用再恢复 MOS！！！</strong></p>
+<blockquote>
+<ul>
+<li>总结下 Linux 深度隐藏的操作
+<ol>
+<li>添加 <code>udm</code> 到 <code>/boot/initrd.img-xxx</code> 的 <code>/bin</code> 里</li>
+<li>修改 <code>/boot/initrd.img-xxx</code> 里的 <code>init</code>，加入脚本</li>
+<li>在 <code>MBROSTool</code> 上把 Linux 安装分区深度卸载</li>
+</ol>
+</li>
+<li>该方法仅在 Ubuntu 19.10 上测试成功，其他 Debian 系请自行测试，非 Debian 系可以参考一下上面的总结和资料包里的 <code>UDM对linux的支持.txt</code>。Arch 系发行版可以参考下<a href="https://wiki.archlinux.org/index.php/Mkinitcpio_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">这篇文档</a>来修改</li>
+</ul>
+</blockquote>
+<h1 id="hou-ji">后记</h1>
+<h2 id="sheng-ji-ubuntu-nei-he-hou-de-cao-zuo"><a class="header-anchor" href="#升级Ubuntu内核后的操作"></a>升级 Ubuntu 内核后的操作</h2>
+<p>先进行升级</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> upgrade</span><br></pre></td></tr></tbody></table></figure>
+<p>提示 linux 的内核有更新，可以在更新的时候记一下新内核的版本号</p>
+<p>升级后用 root 打开文件管理器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nautilus</span><br></pre></td></tr></tbody></table></figure>
+<p>更新内核时如果没有留意版本号，可以打开 <code>/boot/grub/grub.cfg</code> 参照安装时的步骤找找</p>
+<p>知道新内核版本号后打开根目录下的 <code>menu.lst</code>、<code>menu0.lst</code> 以及 <code>/efi/mbrosefi_qk.menu.cfg</code>，把里面旧的版本号全部查找替换为新的版本号</p>
+<p>保存，重启查看效果</p>
+<h2 id="mei-hua-qi-dong-xiang"><a class="header-anchor" href="#美化启动项"></a>美化启动项</h2>
+<p>先读写挂载子盘（参考 安装流程 - 处理硬盘分区）</p>
+<p>这里只展示一些我作的修改，详细的美化指南请看工具内的补充帮助</p>
+<ul>
+<li>
+<p>删掉 <code>/udm/pic/bubble.png</code> 可以关闭 MBR 启动菜单里的泡泡动画</p>
+</li>
+<li>
+<p><code>/efi/theme</code> 修改 EFI 启动下引导菜单的主题，加载的是 grub 的主题，但是主题的加载效果有些奇怪，同时要注意子盘大小限制</p>
+<p>这里我使用的是自行魔改了的 <a href="https://www.gnome-look.org/p/1200710/">Atomic GRUB Theme</a>，加入了原主题没有的 <code>udm.png</code>，修改 <code>reastar.png</code> 为 <code>reboot.png</code> 来让它奇怪的 grub 能够识别。资料包里会提供我自用的魔改主题</p>
+</li>
+</ul>
+<h2 id="vm-ware-jia-zai"><a class="header-anchor" href="#VMWare加载"></a>VMWare 加载</h2>
+<p><img data-src="https://i.loli.net/2020/03/26/aolm1Cr4jXwuyLh.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/oqPdYNwQBDk6iWT.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/yfeMnH9LXIgp5rB.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/cHVnr8gDEi7udGl.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/eUMkCXApi1fHlI5.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/pdk75AjSxPvOmTs.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/eJShM6zIRfHb5FP.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/FY4CQx75D9Nr3TU.png" alt=""></p>
+<p>其他默认或自行调整</p>
+<blockquote>
+<p>参考链接</p>
+<p><a href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=410612&amp;extra=page%3D1">http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=410612&amp;extra=page%3D1</a></p>
+<p><a href="https://bbs.luobotou.org/thread-43549-1-1.html">https://bbs.luobotou.org/thread-43549-1-1.html</a></p>
+<p><a href="https://bbs.luobotou.org/forum.php?mod=viewthread&amp;tid=44272&amp;extra=page%3D&amp;page=1">https://bbs.luobotou.org/forum.php?mod=viewthread&amp;tid=44272&amp;extra=page%3D&amp;page=1</a></p>
+<p><a href="https://bbs.luobotou.org/thread-45230-1-1.html">https://bbs.luobotou.org/thread-45230-1-1.html</a></p>
+<p><a href="http://manpages.ubuntu.com/manpages/bionic/en/man8/initramfs-tools.8.html">http://manpages.ubuntu.com/manpages/bionic/en/man8/initramfs-tools.8.html</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>WTG</tag>
+        <tag>移动硬盘</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 Tasker 在 Android 上实现个人动态的发送</title>
+    <url>/posts/4394c3fa.html</url>
+    <content><![CDATA[<p><a href="https://jiml.ee/posts/2b426e0a.html">前情提要</a></p>
+<p>折腾了两天，我终于是实现在 Android 上使用 Tasker 向刚搭建好的个人动态系统发送内容了。</p>
+<h1 id="xiao-guo-zhan-shi">效果展示</h1>
+<p>这是一个在 Android 上向<a href="https://github.com/daibor/nonsense.fun">废话胶囊（b 言 b 语）</a>发送内容的简单 Tasker 工程。</p>
+<p>项目地址：<a href="https://github.com/jimlee2048/nonsense.fun_tasker">https://github.com/jimlee2048/nonsense.fun_tasker</a></p>
+<img data-src="https://i.loli.net/2020/04/22/Hy7kwJL8FDr6I5O.png" style="zoom: 50%;">
+<span id="more"></span>
+<h1 id="an-zhuang-pei-zhi">安装配置</h1>
+<h2 id="直接下载安装已经导出好的apk文件"><a class="header-anchor" href="#直接下载安装已经导出好的apk文件"></a>直接下载安装已经导出好的 <a href="https://github.com/jimlee2048/nonsense.fun_tasker/releases">apk 文件</a></h2>
+<p>应用使用插件 <code>Tasker App Factory</code> 导出。</p>
+<p>注意，该应用<strong>需要 root 权限</strong>。</p>
+<h2 id="导入Tasker工程"><a class="header-anchor" href="#导入Tasker工程"></a>导入 Tasker 工程</h2>
+<p><strong>注意：部分手机可能需要 Root 权限才能使用，该工程默认开启<code>使用Root运行</code>，可以自行到<code>场景/Main/发送/按下</code>的第 6 个和第 8 个任务里关掉该选项</strong>。</p>
+<p><img data-src="https://i.loli.net/2020/04/22/iaTO5gAQLjnufBZ.png" style="zoom: 50%;"><img data-src="https://i.loli.net/2020/04/22/SIJivZ5L4Na9Cu3.png" style="zoom: 50%;"></p>
+<p><img data-src="https://i.loli.net/2020/04/24/c1R3x9HEzyQiTpN.png" style="zoom:50%;"><img data-src="https://i.loli.net/2020/04/22/7BoIjaJL9h6ilf1.png" style="zoom: 50%;"></p>
+<hr>
+<ol>
+<li>
+<p><a href="https://github.com/jimlee2048/nonsense.fun_tasker/releases">下载</a><code>bb.prj.xml</code>，存入到手机任意你找得到的位置。</p>
+</li>
+<li>
+<p>下载安装 Tasker。</p>
+</li>
+<li>
+<p>进入主界面长按左下角的按钮，点击<code>导入项目</code>，在打开的界面中找到并打开刚才存入的 <code>bb.prj.xml。</code></p>
+<p><img data-src="https://i.loli.net/2020/04/22/mpwnk2ZWvMc6uSU.png" style="zoom: 50%;"><img data-src="https://i.loli.net/2020/04/22/3Zc2KIWVfBzhiDM.png" style="zoom: 50%;"></p>
+<blockquote>
+<p>提示：点击右下角的手机按钮可以快速回到内部储存空间目录</p>
+</blockquote>
+</li>
+<li>
+<p>完成后回到主界面，点击应用栏里图标长得和 Tasker 很像的 <code>Tasker Secondary</code>，打开界面。</p>
+<p><img data-src="https://i.loli.net/2020/04/22/Gju9BY64UsWlvTw.png" style="zoom: 50%;"><img data-src="https://i.loli.net/2020/04/22/Hy7kwJL8FDr6I5O.png" style="zoom: 50%;"></p>
+</li>
+<li>
+<p><strong>长按</strong>发送按钮，打开设置页面进行必要设置。</p>
+<img data-src="https://i.loli.net/2020/04/22/YM5CJ6vb4OIdemy.png" style="zoom: 50%;">
+<p><strong>Title：</strong> 这里是发送界面顶端的文字，请随意修改。</p>
+<p><strong>AppID、MasterKey：</strong> 网页打开 LeanCloud，在你的项目里点击<code>设置/应用Keys</code>，复制对应的密钥分别填入。</p>
+<p><img data-src="https://i.loli.net/2020/04/20/Kaxt5GOo3LRgMmy.png" alt=""></p>
+<p><strong>className：</strong> 一般是 <code>content</code>，只要你是按照<a href="https://sspai.com/post/60024">少数派的指南</a>来做的话。</p>
+<p><strong>–insecure：</strong> 是否在脚本命令末尾加上 <code>--insecue</code>。参数默认关闭，如果无法发送可以尝试打开这个选项试试。</p>
+<p><strong>完成后点击确认返回</strong>。</p>
+</li>
+</ol>
+<p>这样就配置完成了，请试试看吧！</p>
+<h1 id="tasker-gong-cheng-shi-yong-fang-fa">Tasker 工程使用方法</h1>
+<h2 id="通过-Tasker-Secondary-打开"><a class="header-anchor" href="#通过-Tasker-Secondary-打开"></a>通过 Tasker Secondary 打开</h2>
+<img data-src="https://i.loli.net/2020/04/22/Gju9BY64UsWlvTw.png" style="zoom: 50%;">
+<h2 id="通过桌面小工具创建快捷方式打开"><a class="header-anchor" href="#通过桌面小工具创建快捷方式打开"></a>通过桌面小工具创建快捷方式打开</h2>
+<ol>
+<li>
+<p>打开 Tasker，然后<strong>点击返回键</strong>回到主界面。</p>
+</li>
+<li>
+<p>在桌面上新建 Tasker 的桌面小部件 "任务"，在打开的界面选择 <code>Show UI</code>,</p>
+<p>在界面下方选择图标，然后点击左上角返回桌面。</p>
+<p><img data-src="https://i.loli.net/2020/04/22/QWRPd7IKmV3oXYj.png" style="zoom: 50%;"><img data-src="https://i.loli.net/2020/04/22/t5dlHRyUgDM7aKX.png" style="zoom: 50%;"></p>
+<p>完成，现在你应该能看到快捷方式了。</p>
+</li>
+</ol>
+<h2 id="自行导出为APK安装"><a class="header-anchor" href="#自行导出为APK安装"></a>自行导出为 APK 安装</h2>
+<p>** 注意：你必须拥有手机的 Root 权限，并勾选<code>场景/Main/发送/按下</code>的第 6 个和第 8 个任务中的<code>使用Root运行</code>选项 **</p>
+<ol>
+<li>
+<p>Google Play 安装 <code>Tasker App Factory</code>。</p>
+</li>
+<li>
+<p>打开 Tasker，主界面左下方长按选择已经导入的项目，然后选择<code>导出\作为应用。</code></p>
+<img data-src="https://i.loli.net/2020/04/22/peARXFgoinvOJzx.png" style="zoom: 50%;">
+<blockquote>
+<p>提示：你可以通过点击<code>更名</code>重命名工程名称来修改应用名。</p>
+</blockquote>
+<img data-src="https://i.loli.net/2020/04/22/TZzLONjeHJviCp5.png" style="zoom:50%;">
+</li>
+<li>
+<p>根据提示输入包名和版本号。</p>
+<img data-src="https://i.loli.net/2020/04/22/Q7nXMpqxhB5o8a3.png" style="zoom: 50%;">
+</li>
+<li>
+<p>点击左上角返回，Tasker 会将项目以 APK 格式导出到<code>内部储存/Tasker/factory/kids</code> 并安装。</p>
+</li>
+</ol>
+<h1 id="hou-ji">后记</h1>
+<p>界面如果有问题可以自行在 Tasker 的<code>场景</code>中修改。</p>
+<p>个人能力有限，做的比较粗糙，还请不吝赐教！</p>
+<h1 id="zhi-xie">致谢</h1>
+<p>感谢 <a href="https://github.com/daibor">daibor</a> 制作了这么棒的<a href="https://github.com/daibor/nonsense.fun">项目。</a></p>
+<p>感谢少数派的 @SoSo 在评论下分享的方法启发了这个工程。</p>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>Tasker</tag>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>OpenWrt/LEDE 的编译与 Mentohust 软件包的添加</title>
+    <url>/posts/a5ac1d77.html</url>
+    <content><![CDATA[<h1 id="shou-ci-bian-yi">首次编译</h1>
+<ul>
+<li>
+<p>依赖安装</p>
+  <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get update</span><br><span class="line"><span class="built_in">sudo</span> apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>代码下载，进入目录</p>
+  <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/coolsnowwolf/lede</span><br><span class="line"><span class="built_in">cd</span> lede</span><br></pre></td></tr></tbody></table></figure>
+  <span id="more"></span>
+</li>
+<li>
+<p>软件包下载、安装</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">./scripts/feeds update -a</span><br><span class="line">./scripts/feeds install -a</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>添加 MentoHUST 软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk.git package/mentohust</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/BoringCat/luci-app-mentohust.git package/luci-app-mentohust</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>调整 OpenWrt 系统组件</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></tbody></table></figure>
+<p>选择好架构与型号，进入 <code>LuCI</code> 一栏选择插件</p>
+<p><code>*</code> 代表编入固件，<code>M</code> 表示编译成模块或者 IPK 包， 留空为不编译</p>
+<p>详细插件应用说明参见<a href="https://www.right.com.cn/forum/thread-344825-1-1.html">这里</a></p>
+<blockquote>
+<p>添加 MentoHUST 需勾选以下位置：</p>
+<ul>
+<li>LuCI —&gt; Applications —&gt; luci-app-mentohust</li>
+<li>Network —&gt; Ruijie —&gt; mentohust</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>预下载所需文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make download -j8 V=s</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>开始编译</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make -j1 V=s</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p><code>-j1</code>：使用单线程编译，数字即为所用线程数。初次推荐单线程编译，一是因为玄学问题可能成功率高，二是方便查看错误日志。</p>
+<p><code>V=s</code>：输出详细日志，用于编译失败时方便找出错误。</p>
+</blockquote>
+</li>
+</ul>
+<h1 id="zai-ci-bian-yi">再次编译</h1>
+<ul>
+<li>
+<p>进入目录</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> lede</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+<h2 id="geng-xin"><a class="header-anchor" href="#更新"></a>更新</h2>
+<blockquote>
+<p>短期内再次编译可忽略</p>
+</blockquote>
+<ul>
+<li>
+<p>更新系统软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt upgrade -y</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>更新 OpenWrt 源码</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git pull</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>更新 feed 源中软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">./scripts/feeds clean</span><br><span class="line">./scripts/feeds update -a</span><br><span class="line">./scripts/feeds install -a</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p><code> ./scripts/feeds clean</code> 可选，用于避免 feeds 较大修改后更新无效</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="wen-jian-qing-li"><a class="header-anchor" href="#文件清理"></a>文件清理</h2>
+<ul>
+<li>
+<p>清除旧的编译产物（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make clean</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>在源码有大规模更新或者内核更新后执行，以保证编译质量。此操作会删除 <code>/bin</code> 和 <code>/build_dir</code> 目录中的文件。</p>
+</blockquote>
+</li>
+<li>
+<p>清除旧的编译产物、交叉编译工具及工具链等目录（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make dirclean</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>更换架构编译前必须执行。此操作会删除 <code>/bin</code> 和 <code>/build_dir</code> 目录的中的文件 (<code>make clean</code>) 以及 <code>/staging_dir</code>、<code>/toolchain</code>、<code>/tmp</code> 和 <code>/logs</code> 中的文件。</p>
+</blockquote>
+</li>
+<li>
+<p>清除 Open­Wrt 源码以外的文件（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make distclean</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>除非是做开发，并打算 push 到 GitHub 这样的远程仓库，否则几乎用不到。此操作相当于 <code>make dirclean</code> 外加删除 <code>/dl</code>、<code>/feeds</code> 目录和<code>.config</code> 文件。</p>
+</blockquote>
+</li>
+<li>
+<p>还原 Open­Wrt 源码到初始状态（可选）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">git clean -xdf</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如果把源码改坏了，或者长时间没有进行编译时使用。</p>
+</blockquote>
+</li>
+<li>
+<p>清除临时文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf tmp</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>删除执行 <code>make menuconfig</code> 后产生的一些临时文件，包括一些软件包的检索信息，删除后会重新加载 <code>package</code> 目录下的软件包。若不删除会导致一些新加入的软件包不显示。</p>
+</blockquote>
+</li>
+<li>
+<p>删除编译配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -f .config</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>在不删除的情况下如果取消选择某些组件它的依赖组件不会自动取消，所以对于需要调整组件的情况下建议删除。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="bian-yi"><a class="header-anchor" href="#编译"></a>编译</h2>
+<ul>
+<li>
+<p>调整 Open­Wrt 系统组件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make menuconfig</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如果不打算调整组件则输入 <code>make defconfig</code>，它会检测编译环境并根据更新自动调整编译配置文件。</p>
+</blockquote>
+</li>
+<li>
+<p>预下载编译所需的软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make download -j8 V=s</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>开始编译</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">make -j$(<span class="built_in">nproc</span>) || make -j1 || make -j1 V=s</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>多线程编译失败后自动进入单线程编译，失败则输出详细日志。</p>
+</blockquote>
+</li>
+<li>
+<p>编译好的固件存放在 <code>lede/bin/targets/</code> 对应架构的文件下，名称为 <code>openwrt-xxxx-xxxx-squashfs-sysupgrade.bin</code></p>
+</li>
+</ul>
+<h1 id="jin-jie-cao-zuo">进阶操作</h1>
+<ul>
+<li>
+<p>使用 Github Action 进行云编译</p>
+<p><a href="https://github.com/P3TERX/Actions-OpenWrt">Github</a></p>
+<p><a href="https://p3terx.com/archives/build-openwrt-with-github-actions.html">中文教程</a></p>
+</li>
+<li>
+<p>在 WSL 上进行编译</p>
+</li>
+</ul>
+<h1 id="zhi-xie">致谢</h1>
+<p><a href="https://p3terx.com/">@P3TERX</a>，博客里的文章对我有很大帮助，本文自他的博客总结而来，亦有很大一部分文字直接复制自它的博客。他亦是上文所提到的 Github Action 云编译 OpenWrt 模板的作者。</p>
+<p><a href="https://www.right.com.cn/forum">恩山论坛</a>，我路由相关知识的启蒙点，感谢各路大神的经验分享。</p>
+<h1 id="can-kao-lian-jie">参考链接</h1>
+<blockquote>
+<p><a href="https://github.com/coolsnowwolf/lede">https://github.com/coolsnowwolf/lede</a></p>
+<p><a href="https://p3terx.com/archives/openwrt-compilation-steps-and-commands.html">https://p3terx.com/archives/openwrt-compilation-steps-and-commands.html</a></p>
+<p><a href="https://www.right.com.cn/forum/thread-344825-1-1.html">https://www.right.com.cn/forum/thread-344825-1-1.html</a></p>
+<p><a href="https://www.right.com.cn/forum/thread-1237348-1-1.html">https://www.right.com.cn/forum/thread-1237348-1-1.html</a></p>
+<p><a href="https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk">https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk</a></p>
+<p><a href="https://github.com/BoringCat/luci-app-mentohust">https://github.com/BoringCat/luci-app-mentohust</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>OpenWrt</tag>
+        <tag>路由器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>群晖 DSM：使用 Docker 部署 acme.sh 申请并配置域名 SSL 证书</title>
+    <url>/posts/d743b4fc.html</url>
+    <content><![CDATA[<h2 id="zhun-bei-gong-zuo"><a class="header-anchor" href="#准备工作"></a>准备工作</h2>
+<ul>
+<li>你的域名，并在你的 DNS 解析服务商中生成 API 密钥，保存备用。</li>
+<li>群晖开启 SSH，并安装 Docker 套件。</li>
+<li>群晖新建一个用户 <code>acme</code>，密码保存备用，加入 <code>administrators</code> 用户组，套件和共享文件夹权限可以全部禁掉。</li>
+</ul>
+<h2 id="pei-zhi-docker"><a class="header-anchor" href="#配置-Docker"></a>配置 Docker</h2>
+<ol>
+<li>
+<p>用 File Station 在共享文件夹 <code>docker</code> 里新建文件夹 <code>acme.sh。</code></p>
+</li>
+<li>
+<p>在本机上创建 <code>docker-compose.yml</code>，内容如下，根据自己情况修改。</p>
+<p>保存后将上传到刚才新建的 <code>docker/acme.sh</code> 文件夹里。</p>
+ <figure class="highlight yml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">acme.sh:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">neilpang/acme.sh:latest</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">acme.sh</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">DP_Id=******</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="string">DP_Key=************************</span> <span class="comment">#准备工作中生成的DNS解析商的API密钥，此处以使用DNSPod为例</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYNO_Scheme=http</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYNO_Hostname=localhost</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYNO_Port=5000</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYNO_Username=acme</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYNO_Password=****************</span> <span class="comment">#填写群晖里新建的用户acme的密码</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYNO_Certificate=example.com</span> <span class="comment">#你的域名</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYNO_Create=1</span>  </span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./data:/acme.sh</span></span><br><span class="line">    <span class="attr">network_mode:</span> <span class="string">host</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">daemon</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>本配置以使用 DNSPod.cn 为例，关于其他域名的配置名，请参考 <a href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi">dnsapi</a>。</p>
+<p><strong>请注意：<strong>变量值</strong>无需加引号或双引号</strong>。</p>
+</blockquote>
+</li>
+<li>
+<p>打开 Docker 套件，在<code>注册表</code>中搜索 "<a href="http://acme.sh">acme.sh</a>"，双击 <code>neilpang/acme.sh</code>，标签选 <code>latest</code>，点确定下载映像。</p>
+</li>
+<li>
+<p>SSH 连接群晖，挂载到刚刚新建的 <code>docker/acme.sh</code> 文件夹里，启动 docker 容器。</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /volume1/docker/acme.sh</span><br><span class="line"><span class="built_in">sudo</span> docker-compose up -d</span><br></pre></td></tr></tbody></table></figure>
+<p>如果无误，应该能在群晖 docker 套件中看到刚启动的容器 <code>acme.sh</code>。</p>
+</li>
+</ol>
+<h2 id="shen-qing-bing-pei-zhi-zheng-shu"><a class="header-anchor" href="#申请并配置证书"></a>申请并配置证书</h2>
+<ol>
+<li>
+<p>（可选）设置默认申请 Let’s Encrypt 证书。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker <span class="built_in">exec</span> acme.sh --set-default-ca  --server  letsencrypt</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如不修改，<a href="http://acme.sh">acme.sh</a> 将默认申请 <a href="http://ZeroSSL.com">ZeroSSL.com</a> 的证书。详见 <a href="https://github.com/acmesh-official/acme.sh/wiki/ZeroSSL.com-CA">ZeroSSL.com CA</a>。</p>
+</blockquote>
+</li>
+<li>
+<p>申请证书。以使用解析商 DNSPod.cn 为例。</p>
+<p>请根据实际需要修改参数为自己的 DNS 解析商和域名。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker <span class="built_in">exec</span> acme.sh --issue --dns dns_dp -d example.com</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>申请完成后，使用 <a href="https://github.com/acmesh-official/acme.sh/wiki/deployhooks#20-deploy-the-cert-into-synology-dsm">deployhooks</a> 将证书导入群晖。</p>
+<p>请根据实际需要修改参数为自己的域名。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker <span class="built_in">exec</span> acme.sh --deploy -d example.com --deploy-hook synology_dsm</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>群晖 DSM 中打开控制面板 - 安全性，根据自己需要设置新的证书。</p>
+</li>
+</ol>
+<h2 id="can-kao"><a class="header-anchor" href="#参考"></a>参考</h2>
+<ul>
+<li><a href="https://www.reddit.com/r/synology/comments/jh55h0/howto_automate_lets_encrypt_certificate_renewal/">Howto: Automate let’s encrypt certificate renewal and installation in DSM</a></li>
+<li><a href="https://www.ioiox.com/archives/88.html">群晖 NAS 高级服务 - docker 部署 acme.sh 自动申请域名证书</a></li>
+<li><a href="https://www.fusehunt.co.uk/post/acme-docker-synology-ssl-cert/">SSL Cert from Let’s Encrypt for Synology via Acme.sh and Docker</a></li>
+<li><a href="https://github.com/acmesh-official/acme.sh/wiki/Synology-NAS-Guide">acme.sh/Synology NAS Guide</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>群晖</tag>
+        <tag>域名</tag>
+        <tag>证书</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>群晖 DSM：使用 Docker 部署多个下载器</title>
+    <url>/posts/a0c69e5e.html</url>
+    <content><![CDATA[<p>折腾 NAS 的一大需求就是当下载机用。<br>
+考虑到以后有入坑 PT 的打算，决定使用 Docker 配置多个下载器实例，分管 BT 和 PT。</p>
+<ul>
+<li>BT：使用 <a href="https://hub.docker.com/r/superng6/qbittorrentee">superng6/qbittorrentee</a>，可以自动更新 trackers，同时还能 ban 掉迅雷吸血客户端。</li>
+<li>PT：暂时只配置 <a href="https://hub.docker.com/r/linuxserver/qbittorrent">linuxserver/qbittorrent</a>，待进一步入坑学习后配合 <a href="https://hub.docker.com/r/linuxserver/transmission">linuxserver/transmission</a> 保种。</li>
+</ul>
+<h2 id="zhun-bei-gong-zuo"><a class="header-anchor" href="#准备工作"></a>准备工作</h2>
+<ul>
+<li>
+<p>群晖开启 SSH，安装 Docker 套件。</p>
+</li>
+<li>
+<p>新建共享文件夹 <code>Downloads</code>，为下载器提供下载路径。</p>
+<p>为区分 BT 与 PT 任务，个人还额外作了以下的结构安排：</p>
+<ul>
+<li><code>Downloads/BT</code></li>
+<li><code>Downloads/PT</code></li>
+</ul>
+</li>
+<li>
+<p><code>docker</code> 文件夹里新建以下文件夹</p>
+<ul>
+<li><code>downloaders/</code></li>
+<li><code>downloaders/qbittorrentee/config</code> （qbittorrentee 的配置文件）</li>
+<li><code>downloaders/qbittorrent/config</code>（qbittorrent 的配置文件）</li>
+<li><code>webui/</code>（用于存放 web ui 主题）</li>
+</ul>
+</li>
+<li>
+<p>SSH 连接群晖，输入命令 <code>id</code> 获取当前用户的 UID 与 GID ，保存备用。</p>
+</li>
+</ul>
+<h2 id="bu-shu-docker-rong-qi"><a class="header-anchor" href="#部署-Docker-容器"></a>部署 Docker 容器</h2>
+<p>为便于管理，这里使用 docker compose 进行部署。</p>
+<ol>
+<li>
+<p>创建文件 <code>docker-compose.yml</code>，内容如下；</p>
+<p>以下内容皆基于笔者的个人配置，请注意根据自己的实际情况修改参数：</p>
+ <figure class="highlight yaml"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">qbittorrentee:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">superng6/qbittorrentee:latest</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">qbittorrentee</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">PUID=1026</span>    <span class="comment"># 填写刚才获取到的UID</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">PGID=100</span>    <span class="comment"># 填写刚才获取到的GID</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">WEBUIPORT=16800</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./qbittorrentee/config:/config</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./webui:/webui</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/volume2/Downloads/BT:/downloads</span>    <span class="comment"># 挂载的下载目录</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">16881</span><span class="string">:16881</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">16881</span><span class="string">:16881/udp</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">16800</span><span class="string">:16800</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">ipv4_address:</span> <span class="number">172.120</span><span class="number">.1</span><span class="number">.1</span>    <span class="comment"># 指派固定容器ip，便于跨容器沟通</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br><span class="line">   </span><br><span class="line">  <span class="attr">qbittorrent:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">linuxserver/qbittorrent:latest</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">qbittorrent</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">PUID=1026</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">PGID=100</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">WEBUI_PORT=6800</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./qbittorrent/config:/config</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./webui:/webui</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/volume2/Downloads/PT:/downloads</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">6881</span><span class="string">:6881</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">6881</span><span class="string">:6881/udp</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">6800</span><span class="string">:6800</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">ipv4_address:</span> <span class="number">172.120</span><span class="number">.2</span><span class="number">.1</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br><span class="line">   </span><br><span class="line"><span class="comment"># 自定义网络downloaders，并指定特定网段，便于为各个容器指派固定ip地址</span></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">downloaders</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br><span class="line">    <span class="attr">ipam:</span></span><br><span class="line">      <span class="attr">config:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">subnet:</span> <span class="number">172.120</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">          <span class="attr">gateway:</span> <span class="number">172.120</span><span class="number">.0</span><span class="number">.1</span></span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>将配置好参数的 <code>docker-compose.yml</code> 上传到群晖 <code>docker/downloaders</code> 下</p>
+</li>
+<li>
+<p>SSH 挂载到 <code>docker/downloaders</code>，输入命令：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></tbody></table></figure>
+<p>等待容器启动完成。</p>
+</li>
+</ol>
+<h2 id="pei-zhi-xia-zai-qi-can-shu"><a class="header-anchor" href="#配置下载器参数"></a>配置下载器参数</h2>
+<p>这里假设群晖的局域网 ip 为 <code>192.168.1.5</code>。</p>
+<h3 id="qbittorrentee"><a class="header-anchor" href="#qbittorrentee"></a>qbittorrentee</h3>
+<p>用作 BT 下载。以下简称 qbee。</p>
+<ol>
+<li>
+<p>浏览器输入 <code>192.168.1.5:16800</code>，登陆 qbee 的 web ui。</p>
+<blockquote>
+<p>默认账户：admin</p>
+<p>默认密码：adminadmin</p>
+</blockquote>
+</li>
+<li>
+<p>打开 工具 - 选项 ，进入设置界面，根据需要配置参数。</p>
+<p>一定要记得把默认用户与密码改掉！</p>
+<blockquote>
+<p><strong>一些参考资料：</strong></p>
+<ul>
+<li><a href="https://post.smzdm.com/p/ag827k26/">BT 下载教程 篇三：qBittorrent 全平台通用优化教程，适用于群晖 N1 小钢炮 </a></li>
+<li><a href="https://post.smzdm.com/p/a3gwqd7k/">BT 下载教程 篇四：qbittorrent 设置补充说明及更换 WEB UI</a></li>
+<li><a href="https://post.smzdm.com/p/anx5qew2/">qBittorrent 4.3.7 设置</a></li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<p>以下是我 qbee 的个人配置，仅供参考：</p>
+<p><img data-src="https://i.loli.net/2021/10/04/TmRBvrIUVQh2Hcp.png" alt="20211004_grQpldEGTu"></p>
+<p><img data-src="https://i.loli.net/2021/10/04/9SmiRjKFLncqEHP.png" alt="20211004_grQpldEGTu"></p>
+<p><img data-src="https://i.loli.net/2021/10/04/CAw6TgqVIsMNGlO.png" alt="20211004_aCDj3fZUqw"></p>
+<h3 id="qbittorrent"><a class="header-anchor" href="#qbittorrent"></a>qbittorrent</h3>
+<p>用作 BT 下载。以下简称 qb。</p>
+<p>进入 <code>192.168.1.5:6800</code>，配置方法同上</p>
+<p>以下是我 qb 的个人配置，仅供参考：</p>
+<p><img data-src="https://i.loli.net/2021/10/04/xyQ32ilPpEgrcL1.png" alt="20211004_6ocsO8qdcP"></p>
+<p><img data-src="https://i.loli.net/2021/10/04/cDX8aBpKZtnr5yb.png" alt="20211004_s2GBhAyVTV"></p>
+<h2 id="todo"><a class="header-anchor" href="#TODO"></a>TODO</h2>
+<ul>
+<li>使用 Transmission 保种</li>
+<li>使用 IYUU 辅种</li>
+</ul>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>群晖</tag>
+        <tag>Docker</tag>
+        <tag>BT/PT</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>物理黑群晖 DSM 7.0 安装 / 升级指南</title>
+    <url>/posts/e8dfd8dc.html</url>
+    <content><![CDATA[<h2 id="zhun-bei-gong-zuo"><a class="header-anchor" href="#准备工作"></a>准备工作</h2>
+<ul>
+<li>一块容量 2GB 以上的 U 盘，这个 U 盘将刷写 TCRP 并作为黑群晖的引导盘使用，需要一直插在黑群晖上。下文用 "引导 U 盘" 代指该 U 盘</li>
+<li>将要安装黑群晖的主机，并在 BIOS 进行以下设置
+<ul>
+<li>如果 CPU 是 AMD 的，开启 C1E 选项</li>
+<li>硬盘模式设为 AHCI</li>
+<li> 开启所有硬盘端口的热插拔功能</li>
+<li>如果不使用，禁用 M.2 SATA 接口</li>
+</ul>
+</li>
+<li>良好的国际互联网连接条件</li>
+</ul>
+<h2 id="step-1-shua-xie-tiny-core-red-pill-loader"><a class="header-anchor" href="#Step-1-刷写-TinyCore-RedPill-Loader"></a>Step 1 刷写 TinyCore RedPill Loader</h2>
+<blockquote>
+<p>TinyCore RedPill Loader，详细介绍参见 <a href="https://xpenology.com/forum/topic/53817-redpill-tinycore-loader/">RedPill Tinycore loader - Developer Discussion Room - XPEnology Community</a><br>
+以下简称 TCRP。</p>
+</blockquote>
+<p>到 <a href="https://github.com/pocopico/tinycore-redpill">GitHub - pocopico/tinycore-redpill</a> 下载 TCRP 镜像。<br>
+镜像的选择：</p>
+<ul>
+<li><code>tinycore-redpill.vX.X.X.img.gz</code> : for BIOS/CSM/Legacy boot from USB flash drive</li>
+<li><code>tinycore-redpill-uefi.vX.X.X.img.gz </code> : for UEFI/EFI boot from USB flash drive</li>
+<li><code>tinycore-redpill.vX.X.X.vmdk.gz</code> : for virtual machine SATABOOT&nbsp;from disk image<br>
+使用 Rufus 或其他类似的刷写镜像的软件工具，将下载好的 TCRP 镜像刷写到准备好的引导 U 盘中。</li>
+</ul>
+<h2 id="step-2-jin-ru-tcrp-amp-jin-xing-yu-pei-zhi"><a class="header-anchor" href="#Step-2-进入-TCRP-进行预配置"></a>Step 2 进入 TCRP &amp; 进行预配置</h2>
+<p>将引导 U 盘接入要安装黑群晖的机器上。<br>
+插入所有你打算在黑群晖中使用的硬盘，接好网线</p>
+<blockquote>
+<p><strong>对于迁移：</strong><br>
+请将先前在旧版黑裙上使用的所有硬盘移除<br>
+先使用一块干净的其他 HDD/SSD 进行测试安装</p>
+</blockquote>
+<p>启动机器，引导进入 TCRP，然后设法进入命令行。</p>
+<ul>
+<li>你可以连接显示器，并使用鼠标键盘直接操作 GUI。此时点击系统界面右下角的 Terminal 图标即可<br>
+<img data-src="https://xpenology.com/forum/uploads/monthly_2022_05/image.thumb.png.b31a72e47996bb96ef319a38bca0d5b0.png" alt=""></li>
+<li>你也可以使用机器的局域网 IP，通过 SSH 客户端连接</li>
+</ul>
+<blockquote>
+<p>登录信息：</p>
+<ul>
+<li>username: tc</li>
+<li>password: P@ssw0rd</li>
+</ul>
+</blockquote>
+<p>进入命令行后，首先更新相关脚本文件：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh update</span><br><span class="line">./rploader.sh fullupgrade</span><br></pre></td></tr></tbody></table></figure>
+<p>随后，根据自己需要，确定要安装的黑群晖平台及其对应 DSM 版本号。</p>
+<blockquote>
+<p>参考 <a href="https://xpenology.com/forum/topic/61634-dsm-7x-loaders-and-platforms/">DSM 7.x Loaders and Platforms - Tutorials and Guides - XPEnology Community</a></p>
+</blockquote>
+<p>脚本可输出当前版本 TCRP 支持生成的平台与其对应的 DSM 版本号</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh</span><br></pre></td></tr></tbody></table></figure>
+<p>本文将以平台 <code>apollolake-7.1.0-42661</code> 为例。</p>
+<h2 id="step-3-gen-ju-she-bei-xin-xi-zi-ding-yi-loader-sheng-cheng-can-shu"><a class="header-anchor" href="#Step-3-根据设备信息自定义-Loader-生成参数"></a>Step 3 根据设备信息自定义 Loader 生成参数</h2>
+<p>TCRP 生成 Loader 的参数储存在 <code>user_config.json</code> 中，你可以通过自行编辑该文件来手动自定义参数。<br>
+你也可以使用 TCRP 的脚本帮助确定对应自己设备的自定义参数。<br>
+以平台 <code>DS918+</code> 为例，以下是使用 TCRP 定义生成参数的示例：</p>
+<h3 id="she-zhi-yin-dao-u-pan-de-vid-pid"><a class="header-anchor" href="#设置引导-U-盘的-VID-PID"></a>设置引导 U 盘的 VID/PID</h3>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh identifyusb</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="she-zhi-sn-yu-mac-di-zhi"><a class="header-anchor" href="#设置-SN-与-MAC-地址"></a>设置 SN 与 MAC 地址</h3>
+<p>SN 将会随机生成。如需特别指定，请手动修改 <code>user_config.json</code> 。<br>
+对于 MAC 地址，如需随机生成：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh serialgen DS918+</span><br></pre></td></tr></tbody></table></figure>
+<p>如果希望使用设备主板网口的真实 MAC 地址：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh serialgen DS918+ realmac</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议使用主板真实 MAC 地址，以便设置 WOL 唤醒</p>
+</blockquote>
+<h3 id="she-zhi-ying-pan-cha-cao-ying-she-drive-slot-mapping"><a class="header-anchor" href="#设置硬盘插槽映射（Drive-Slot-Mapping）"></a>设置硬盘插槽映射（Drive Slot Mapping）</h3>
+<p>为确保硬盘能够被 DSM 正确读取，需要配置参数以将设备硬件的硬盘控制器正确映射到 DSM 的插槽中。<br>
+根据不同的平台，硬盘插槽映射有 <code>SataPortMap/DiskIdxMap</code> 和 <code>Device Tree</code> 两种，请参考 <a href="https://xpenology.com/forum/topic/61634-dsm-7x-loaders-and-platforms/">DSM 7.x Loaders and Platforms - Tutorials and Guides - XPEnology Community</a> , 根据自己选择的平台来确定你所需要使用的硬盘插槽映射模式。</p>
+<p><strong>对于使用 <code>SataPortMap/DiskIdxMap</code> 的平台</strong>，你需要在生成 Loader 前配置映射参数。<br>
+首先，先尝试使用 TCRP 自动配置映射参数：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh satamap</span><br></pre></td></tr></tbody></table></figure>
+<p>此时，脚本会自动寻找设备上的硬盘控制器，同时依次输出每个控制器下的硬盘接口数与已连接硬盘数，并要求你检查自动检测到的每个硬盘控制器的硬盘接口数是否正确：</p>
+<ul>
+<li>如不正确，输入数字指定该硬盘控制器的硬盘接口数。</li>
+<li>如果正确，回车接受该硬盘控制器的自动检测结果。<br>
+分别检查完成后，TCRP 脚本将会输出配置参数，检查无误后即可保存到文件。<br>
+如果自动生成的映射参数存在问题，可以在保存自动生成参数后编辑 <code>user_config.json</code> ，进行调整。</li>
+</ul>
+<p>手动配置 / 调整映射参数，请参考以下文章：</p>
+<ul>
+<li><a href="http://www.gebi1.com/thread-301372-1-1.html">DiskIdxMap、SataPortMap 设置方法及思路 - 黑白群晖 - 隔壁网</a></li>
+<li><a href="https://www.gitloc.com/archives/219.html">群晖 DSM7.X 版本自动获取 SataPortMap 和 DiskIdxMap 的教程（2022 年 3 月 11 日更新）（转） - TechBlog</a></li>
+</ul>
+<p>示例：</p>
+<blockquote>
+<p><strong>示例设备信息：</strong><br>
+华擎 J3455-ITX</p>
+<ul>
+<li>主板板载的 4 个 SATA3 接口，其中：
+<ul>
+<li>2 * SATA (板载 1-2) from CPU 原生硬盘控制器</li>
+<li> 2 * SATA (板载 3-4) from 板载 ASMedia ASM1061</li>
+</ul>
+</li>
+<li>m.2 wifi 上接入的 2 口 SATA 扩展卡
+<ul>
+<li>2 * SATA (扩展 1-2) from JMS583</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>需求：</strong><br>
+主板的 4 个 SATA 口依次对应 DSM 的硬盘槽 1-4，扩展卡的 2 个 SATA 口对应 DSM 的硬盘槽 5-6</p>
+<ul>
+<li>DSM 硬盘槽 1-2 -&gt; 2 * SATA (板载 01-02) from CPU 原生硬盘控制器</li>
+<li> DSM 硬盘槽 3-4 -&gt; 2 * SATA (板载 03-04) from 板载 ASMedia ASM1061</li>
+<li>DSM 硬盘槽 5-6 -&gt; 2 * SATA (扩展 01-02) from 扩展卡 JMS583</li>
+</ul>
+</blockquote>
+<p>首先，使用 TCRP 的脚本自动检测并生成映射参数</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"># 识别到的第1个控制器为板载的CPU原生硬盘控制器，实际共2个SATA端口</span><br><span class="line"># TCRP 检测到该硬盘控制器有2个端口，自动识别正确</span><br><span class="line">Found "00:12.0 Intel Corporation Celeron N3350/Pentium N4200/Atom E3900 Series SATA AHCI Controller (rev 0b)"</span><br><span class="line">Detected 2 ports/1 drives. Override # of ports or ENTER to accept &lt;2&gt; 2</span><br><span class="line"></span><br><span class="line"># 识别到的第2个控制器为m.2 wifi接口上接入的2口SATA扩展卡，实际共2个SATA端口</span><br><span class="line"># TCRP检测到该控制器存在5个端口，并提示第3-5端口为"bad port"</span><br><span class="line"># 结合实际情况，手动指定该硬盘控制器的端口数为2</span><br><span class="line">Found "02:00.0 JMicron Technology Corp. Device 0585"</span><br><span class="line">Detected 5 ports/1 drives. Bad ports: 3 4 5. Override # of ports or ENTER to accept &lt;5&gt; 2</span><br><span class="line"></span><br><span class="line"># 识别到的第3个控制器为板载的 ASMedia ASM1061，实际共2个SATA端口</span><br><span class="line"># TCRP 检测到该硬盘控制器有2个端口，自动识别正确</span><br><span class="line">Found "03:00.0 ASMedia Technology Inc. ASM1062 Serial ATA Controller (rev 02)"</span><br><span class="line">Detected 2 ports/0 drives. Override # of ports or ENTER to accept &lt;2&gt; 2</span><br><span class="line"></span><br><span class="line">Computed settings:</span><br><span class="line">SataPortMap=222</span><br><span class="line">DiskIdxMap=000204</span><br><span class="line"></span><br><span class="line">Should i update the user_config.json with these values ? [Yy/Nn] y</span><br><span class="line">Done.</span><br></pre></td></tr></tbody></table></figure>
+<p>可以看到，脚本自动生成的映射参数为：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">SataPortMap=222</span><br><span class="line">DiskIdxMap=000204</span><br></pre></td></tr></tbody></table></figure>
+<p>由于 TCRP 脚本把 SATA 扩展卡的控制器识别为了第二个控制器，而把提供板载 3-4 号 SATA 口的 ASMedia ASM1061 识别为了第三个控制器，根据自动生成的参数，群晖上实际识别的结果是：</p>
+<ul>
+<li>DSM 硬盘槽 1-2 -&gt; 2 * SATA (板载 1-2) from CPU 原生硬盘控制器</li>
+<li> DSM 硬盘槽 3-4 -&gt; 2 * SATA (扩展 1-2) from 扩展卡 JMS583</li>
+<li>DSM 硬盘槽 5-6 -&gt; 2 * SATA (板载 3-4) from 板载 ASMedia ASM1061</li>
+</ul>
+<p>与前面提到的需求不符，因此需要手动编辑映射参数，<br>
+修改 <code>user_config.json</code> 中的硬盘端口映射参数为：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">SataPortMap=222</span><br><span class="line">DiskIdxMap=000402</span><br></pre></td></tr></tbody></table></figure>
+<p>修改后，后两个硬盘控制器端口的映射关系相互交换，此时映射关系如下。</p>
+<ul>
+<li>DSM 硬盘槽 1-2 -&gt; 2 * SATA (板载 01-02) from CPU 原生硬盘控制器</li>
+<li> DSM 硬盘槽 3-4 -&gt; 2 * SATA (板载 03-04) from 板载 ASMedia ASM1061</li>
+<li>DSM 硬盘槽 5-6 -&gt; 2 * SATA (扩展 01-02) from 扩展卡 JMS583</li>
+</ul>
+<p><strong>对于使用 <code>Device Tree</code> 的平台</strong>，上述命令可跳过，硬盘映射在生成 Loader 时会自动配置。</p>
+<h3 id="jian-cha-loader-sheng-cheng-pei-zhi-wen-jian"><a class="header-anchor" href="#检查-Loader-生成配置文件"></a>检查 Loader 生成配置文件</h3>
+<p>检查 TCRP 自动生成的 Loader 生成配置文件<br>
+对于命令行：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">vi user_config.json</span><br></pre></td></tr></tbody></table></figure>
+<p>也可以使用 TCRP 系统 GUI 提供的图形编辑器：<br>
+<img data-src="https://xpenology.com/forum/uploads/monthly_2022_05/image.thumb.png.41b953c551a688a06aa217702b82d315.png" alt=""></p>
+<h2 id="step-4-tian-jia-zi-ding-yi-qu-dong-kuo-zhan-ke-xuan"><a class="header-anchor" href="#Step-4-添加自定义驱动扩展（可选"></a>Step 4 添加自定义驱动扩展（可选)</h2>
+<p>你可以添加自定义的驱动扩展，以便使用不能在群晖下免驱的设备 / 群晖没有提供的功能驱动 / 修复特定设备的兼容性问题。</p>
+<p>显示指定的平台和 DSM 版本号可用的扩展</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh listmods &lt;architecture&gt;-&lt;version&gt;-&lt;DSMreleasenumber&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>示例：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh listmods apollolake-7.1.0-42661</span><br></pre></td></tr></tbody></table></figure>
+<p>添加特定扩展：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh ext &lt;architecture&gt;-&lt;version&gt;-&lt;DSMreleasenumber&gt; &lt;extensionurl&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>示例 &amp; 常用扩展<br>
+添加 acpid 以修复机箱关机按钮失效的问题：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh ext apollolake-7.1.0-42661 add https://raw.githubusercontent.com/pocopico/rp-ext/master/redpill-acpid/rpext-index.json</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如果后续生成固件时，提示该扩展无法在所选平台构建，请尝试使用下面的链接添加 acpid 扩展</p>
+</blockquote>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh ext apollolake-7.1.0-42661 add https://raw.githubusercontent.com/pocopico/redpill-load/develop/redpill-acpid/rpext-index.json</span><br></pre></td></tr></tbody></table></figure>
+<p>添加 Virtio 支持：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh ext apollolake-7.1.0-42661 add https://raw.githubusercontent.com/pocopico/rp-ext/master/v9fs/rpext-index.json</span><br></pre></td></tr></tbody></table></figure>
+<p>添加对 RTL8125 2.5G 网卡的支持</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh ext apollolake-7.1.0-42661 add https://raw.githubusercontent.com/pocopico/rp-ext/master/r8125/rpext-index.json</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="step-5-sheng-cheng-loader"><a class="header-anchor" href="#Step-5-生成-Loader"></a>Step 5 生成 Loader</h2>
+<blockquote>
+<p>请确保全程拥有良好的全球网络连接条件</p>
+</blockquote>
+<p>检查确认配置的生成参数无误后，运行脚本生成 Loader</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh build &lt;architecture&gt;-&lt;version&gt;-&lt;DSMreleasenumber&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>示例：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh build apollolake-7.1.0-42661</span><br></pre></td></tr></tbody></table></figure>
+<p>此时，TCRP 会根据配置好的生成参数，自动从网上下载生成 Loader 所需的文件，并完成 Loader 生成工作。Loader 生成完成后，会自动刷入引导 U 盘，并加入到引导 U 盘的引导菜单中，并将 Loader 作为默认引导项。</p>
+<p>如果中途生成失败，希望清理先前构建时产生的缓存，执行：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh clean</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="step-6-bei-fen-ke-xuan"><a class="header-anchor" href="#Step-6-备份（可选）"></a>Step 6 备份（可选）</h2>
+<p>备份在 TCRP 中的已配置的参数与设置，下次进入 TCRP 会自动加载</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh backup</span><br></pre></td></tr></tbody></table></figure>
+<p>备份前一次生成好的 Loader 为文件</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh backuploader</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="step-7-zhong-qi-bing-an-zhuang-dsm"><a class="header-anchor" href="#Step-7-重启并安装-DSM"></a>Step 7 重启并安装 DSM</h2>
+<p>重启设备</p>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">exitcheck.sh reboot</span><br></pre></td></tr></tbody></table></figure>
+<p>重启后，引导 U 盘进入 grub，系统会默认引导到先前生成并刷写好的 Loader 中。<br>
+如有必要，你也可以手动选择。<br>
+<img data-src="https://xpenology.com/forum/uploads/monthly_2022_05/image.thumb.png.548fcd8fbcbe33e95a0b4e2d0dc59943.png" alt=""><br>
+进入后，等待几分钟，然后使用 <a href="https://find.synology.com/">https://find.synology.com</a> 或者 <a href="https://www.synology.com/en-us/releaseNote/Assistant">Synology Assistant</a> 查找黑群晖设备。<br>
+如果一切正常，你将能看到一台状态为 "DSM 未安装" 或 "可迁移" 的群晖设备。</p>
+<p>浏览器打开显示的 ip 地址，并在页面中上传 Loader 对应平台和版本号的 DSM 系统安装文件，随后跟随流程完成安装 / 迁移即可。<br>
+<img data-src="https://xpenology.com/forum/uploads/monthly_2022_06/image.thumb.png.c6ccac9e64f07a9129007fa4a7f463da.png" alt=""></p>
+<p><strong>注意：</strong> 当安装过程中选择 DSM 系统更新策略时，请一定注意选择手动升级，不要开启自动升级。</p>
+<h2 id="cong-dsm-6-x-juns-loader-qian-yi-sheng-ji"><a class="header-anchor" href="#从-DSM-6-x-Jun’s-loader-迁移升级"></a>从 DSM 6.x (Jun’s loader) 迁移升级</h2>
+<p>从 DSM 6.x (Jun’s loader) 迁移升级至本文 DSM 7.x（RedPill Loader），请遵循以下步骤：</p>
+<ol>
+<li>操作前备份好黑群晖上的所有数据，同时卸载掉 SSD 缓存</li>
+<li>黑群晖设备关机后，把所有硬盘和缓存用的 SSD 卸载移除，同时拔掉旧有安装了 Jun’s loader 的 DSm6.x 引导 U 盘</li>
+<li>准备好调试用的 1 个新的引导 U 盘和 1 块干净的 HDD/SSD</li>
+<li> 参考上文步骤在新的引导 U 盘上配置 RedPill Loader，并使用准备好的干净 HDD/SSD 进行测试</li>
+<li>确认新 Loader 没有问题一切正常后，关机将测试用的 HDD/SSD 替换回原有的硬盘，先不要插上缓存用的 SSD</li>
+<li> 重新开机，使用 <a href="https://find.synology.com/">https://find.synology.com</a> 或者 <a href="https://www.synology.com/en-us/releaseNote/Assistant">Synology Assistant</a> 查找黑群晖设备，在<strong>确认设备状态为 "DSM 可迁移"</strong> 后浏览器打开设备管理页面。</li>
+<li>根据提示进行升级迁移操作。在迁移进度正式开始后，拔掉网线以避免迁移过程中自动升级到不匹配 Loader 的版本。</li>
+<li>迁移完成并确认一切正常后，重新安装并配置 SSD 缓存</li>
+</ol>
+<h2 id="hou-xu-dsm-7-x-geng-xin-sheng-ji-fang-fa"><a class="header-anchor" href="#后续-DSM7-x-更新升级方法"></a>后续 DSM7. x 更新升级方法</h2>
+<p>在 TCRP 适配新版本 DSM7. x 后：</p>
+<ol>
+<li>手动在 DSM 管理面板安装更新</li>
+<li>安装后重启时引导进入 TCRP，使用命令行更新 Loader：</li>
+</ol>
+<figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">./rploader.sh backup</span><br><span class="line">./rploader.sh backuploader</span><br><span class="line">./rploader.sh update</span><br><span class="line">./rploader.sh postupdate &lt;architecture&gt;-&lt;version&gt;-&lt;DSMreleasenumber&gt;</span><br><span class="line">exitcheck.sh reboot</span><br></pre></td></tr></tbody></table></figure>
+<p>重启后，需要在引导界面手动选回默认的 RedPill Loader 引导项</p>
+<h2 id="can-kao-zi-liao"><a class="header-anchor" href="#参考资料"></a>参考资料</h2>
+<ul>
+<li><a href="https://github.com/pocopico/tinycore-redpill">GitHub - pocopico/tinycore-redpill</a></li>
+<li><a href="https://xpenology.com/forum/topic/62221-tutorial-installmigrate-to-dsm-7x-with-tinycore-redpill-tcrp-loader">Tutorial: Install/Migrate to DSM 7.x with TinyCore RedPill (TCRP) Loader - Tutorials and Guides - XPEnology Community</a></li>
+<li><a href="https://xpenology.com/forum/topic/61634-dsm-7x-loaders-and-platforms/">DSM 7.x Loaders and Platforms - Tutorials and Guides - XPEnology Community</a></li>
+<li><a href="https://xpenology.com/forum/topic/58464-beta-about-redpill-sataportmap-and-diskidxmap/">[BETA] About REDPILL SataPortMap and DiskIdxMap - Tutorials and Guides - XPEnology Community</a></li>
+<li><a href="https://xpenology.com/forum/topic/32867-sata-and-sas-config-commands-in-grubcfg-and-what-they-do/">sata and sas config commands in grub.cfg and what they do - Tutorials and Guides - XPEnology Community</a></li>
+<li><a href="http://www.gebi1.com/thread-301372-1-1.html">DiskIdxMap、SataPortMap 设置方法及思路 - 黑白群晖 - 隔壁网</a></li>
+<li><a href="https://www.gitloc.com/archives/219.html">群晖 DSM7.X 版本自动获取 SataPortMap 和 DiskIdxMap 的教程（2022 年 3 月 11 日更新）（转） - TechBlog</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>群晖</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Typora + PicGo - 面向 Hexo 博客撰写需要的写作工具配置</title>
+    <url>/posts/39aaddee.html</url>
+    <content><![CDATA[<h1 id="gong-ju-jie-shao">工具介绍</h1>
+<h2 id="you-ya-de-markdown-bian-ji-qi-typora"><a class="header-anchor" href="#优雅的Markdown编辑器-——-Typora"></a>优雅的 Markdown 编辑器 —— Typora</h2>
+<p><a href="https://www.typora.io/">官网</a></p>
+<p>简约、舒适、优雅，这是我对它的第一眼评价。</p>
+<p>完善的功能、所见即所得、自定义主题、拓展语法支持、良好的图片插入管理、数学支持、专注模式、打字机模式……</p>
+<p>以及免费 —— 这些都是我毫不犹豫下载安装它的原因。</p>
+<p>展现在我面前的它果然没有让我失望，漂亮的界面让我觉得原来的 VS Code 瞬间就不香了。</p>
+<p>当然，它的实力，还仅不限于此……</p>
+<span id="more"></span>
+<h2 id="xiao-qiao-de-tu-pian-shang-chuan-gong-ju-pic-go"><a class="header-anchor" href="#小巧的图片上传工具——PicGo"></a>小巧的图片上传工具 ——PicGo</h2>
+<p><a href="https://molunerfinn.com/PicGo/">官网</a></p>
+<p>这是一个开源的体积小巧，功能强大的图床工具。</p>
+<p>它支持自建图床和多个常用图床，可以方便地对上传了的进行管理，还能安装拓展插件，实现截图上传、加水印上传等功能。</p>
+<p>但更重要的是，Typora 支持通过它实现拖入到文章中的图片上传图床并替换掉文中图片地址</p>
+<p>Awsome！有了它，再也不用手动上传图床复制链接了！</p>
+<p>下面就来配置下二者的结合使用。</p>
+<h1 id="er-zhe-pei-zhi">二者配置</h1>
+<h2 id="pei-zhi-pic-go-de-shang-chuan-she-zhi"><a class="header-anchor" href="#配置PicGo的上传设置"></a>配置 PicGo 的上传设置</h2>
+<p>此处以 sm.ms 的注册图床为例，其他图床请参考<a href="https://picgo.github.io/PicGo-Doc/zh/guide/getting-started.html">官方文档</a></p>
+<ol>
+<li>
+<p><a href="http://xn--sm-5p3dp06f.ms">登录 sm.ms</a>，获取 API token，复制备用</p>
+<p><img data-src="https://i.loli.net/2020/03/21/wnxrfcZzPtvJk58.png" alt=""></p>
+</li>
+</ol>
+<img data-src="https://i.loli.net/2020/03/21/TYJIjPBk2lAHXgr.png" style="zoom: 80%;">
+<ol start="2">
+<li>
+<p>打开 PicGo，插件设置中输入 smms-user 并安装对应插件，</p>
+<img data-src="https://i.loli.net/2020/03/21/lk4dTXfQF1syWir.png" style="zoom:80%;">
+<p>安装完成后在图床设置里新出现的 <strong>SM.MS - 登录用户</strong>中输入刚才获得的 token，点击确定和设为默认图床</p>
+<img data-src="https://i.loli.net/2020/03/21/n9kpCUiR62EtjOV.png" style="zoom:80%;">
+</li>
+</ol>
+<p>此处 PicGo 配置完成</p>
+<h2 id="pei-zhi-typora"><a class="header-anchor" href="#配置Typora"></a>配置 Typora</h2>
+<p>快捷键 <code>ctrl+逗号</code>打开偏好设置，进入 ``图像` 选项进行如下设置：</p>
+<img data-src="https://i.loli.net/2020/03/21/JBxqTtkSZ59wL2y.png" style="zoom:80%;">
+<p>其中<code>上传服务设定</code>中 <code>PicGo路径</code>一栏请根据自身情况填写 PicGo 的安装路径。</p>
+<p>如果需要上传网络上复制的图片到自己的图床，请勾选<code>插入图片时…</code> 中的<code>对网络位置的图片应用上述规则</code>。</p>
+<p>设置完后点击<code>验证图片上传选项</code>进行测试，成功即设置完成。</p>
+<p>Typora 和 PicGo 里各自的功能就不再展示了，这里仅作二者结合使用的介绍，其他请自行探索！</p>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>图床</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在 WSL2 上进行 OpenWrt 的编译</title>
+    <url>/posts/3a5c40a1.html</url>
+    <content><![CDATA[<h1 id="an-zhuang-wsl">安装 WSL</h1>
+<ul>
+<li>从 Microsoft Store 安装 WSL：略</li>
+<li>使用 LxRunOffline 安装 WSL：参考 <a href="https://p3terx.com/archives/manage-wsl-with-lxrunoffline.html">LxRunOffline</a> 和 @P3TERX 的博客<a href="https://p3terx.com/archives/manage-wsl-with-lxrunoffline.html">《WSL 自定义安装目录、备份转移、设置默认用户 - LxRunOffline 使用教程》</a>。</li>
+</ul>
+<span id="more"></span>
+<h1 id="pei-zhi-bian-yi-huan-jing">配置编译环境</h1>
+<h2 id="pei-zhi-windows-terminal-mo-ren-da-kai-mu-lu-wei-code-code"><a class="header-anchor" href="#配置-Windows-Terminal-默认打开目录为"></a>配置 Windows Terminal 默认打开目录为 <code>~</code></h2>
+<p>打开 <code>Windows Terminal——设置</code>，在 WSL 对应的区域加入一行</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">"startingDirectory": "/home/&lt;username&gt;"</span><br></pre></td></tr></tbody></table></figure>
+<p>其中，<code>&lt;name&gt;</code> 是上方显示的 WSL 的名称，<code>username</code> 是当前 windows 账户用户名的名称。</p>
+<h2 id="geng-huan-a-li-yun-de-yuan"><a class="header-anchor" href="#更换阿里云的源"></a>更换阿里云的源</h2>
+<p>完成 WSL 初始设置后：</p>
+<p>备份原来的源。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cp</span> -ra /etc/apt/sources.list /etc/apt/sources.list.bak</span><br></pre></td></tr></tbody></table></figure>
+<p>修改</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">vim /etc/apt/sources.list</span><br></pre></td></tr></tbody></table></figure>
+<p>将其中的东西替换成：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse</span><br><span class="line"></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse</span><br><span class="line"></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse</span><br><span class="line"></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse</span><br></pre></td></tr></tbody></table></figure>
+<p>保存，退出，然后更新缓存与升级。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get update</span><br><span class="line"><span class="built_in">sudo</span> apt-get upgrade</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="she-zhi-dai-li-yi-clash-wei-li"><a class="header-anchor" href="#设置代理（以-Clash-为例）"></a>设置代理（以 Clash 为例）</h2>
+<p>为了加速编译所需文件的下载，需要给 WSL 挂代理进行网络加速。</p>
+<p>WSL 不走主机端的代理，需要进行一番设置：</p>
+<p>主机开好 Clash，开启 <code>Allow LAN</code> 的选项，</p>
+<p>WSL 回到 <code>/home</code>：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br></pre></td></tr></tbody></table></figure>
+<p>修改 <code>~/.bashrc</code>，自定义代理启动命令：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></tbody></table></figure>
+<p>在末尾加入以下代码：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">alias proxy='export https_proxy="http://127.0.0.1:7890";export http_proxy="http://127.0.0.1:7890";export all_proxy="socks5://127.0.0.1:7891";curl ip.sb;'</span><br><span class="line">alias unproxy='unset https_proxy;unset http_proxy;unset all_proxy;curl ip.sb;'</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>** 注意：** 其中 <code>7890</code> 是 Clash 的代理端口号，请根据自己的配置进行修改。<code>all_proxy</code> 一行的 socks5 端口号为 Clash 的 http 端口号 +1</p>
+</blockquote>
+<p>保存退出，在主机端 Clash 开启的情况下输入：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">proxy</span><br></pre></td></tr></tbody></table></figure>
+<p>即可开启代理。</p>
+<p>输入：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">unproxy</span><br></pre></td></tr></tbody></table></figure>
+<p>关闭代理。</p>
+<h2 id="she-zhi-wsl-zhong-bu-jia-zai-windows-de-path-nei-rong"><a class="header-anchor" href="#设置-WSL-中不加载-Windows-的-PATH-内容"></a>设置 WSL 中不加载 Windows 的 PATH 内容</h2>
+<p><strong>！！在 WSL 中，不进行此项设置会导致编译出错！！</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">vim /etc/wsl.conf</span><br></pre></td></tr></tbody></table></figure>
+<p>打开后输入：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">[interop]</span><br><span class="line">appendWindowsPath = <span class="literal">false</span></span><br></pre></td></tr></tbody></table></figure>
+<p>保存退出后<strong>重启</strong>即可。</p>
+<h2 id="an-zhuang-bian-yi-yi-lai"><a class="header-anchor" href="#安装编译依赖"></a>安装编译依赖</h2>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get update</span><br><span class="line"><span class="built_in">sudo</span> apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync</span><br></pre></td></tr></tbody></table></figure>
+<p>然后就可以开始编译了。</p>
+<h1 id="bian-yi">编译</h1>
+<p>参见 <a href="">OpenWrt/LEDE 的编译与 Mentohust 软件包的添加 —— 以斐讯 K2 为例</a></p>
+<p>OpenWrt/Lede 源码请务必 <code>Clone</code> 到 <code>~</code> 下再进行操作</p>
+<h2 id="huo-qu-bian-yi-de-gu-jian"><a class="header-anchor" href="#获取编译的固件"></a>获取编译的固件</h2>
+<p>在资源管理器地址栏输入 <code>\\wsl$</code> 即可访问 WSL 下的文件。以 x86_64 平台为例子，固件所在路径为：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">\\wsl$\WSL名称\home\用户名\lede\bin\targets\x86\64</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="zhi-xie">致谢</h1>
+<p>感谢 <a href="https://p3terx.com/">@P3TERX</a>，博客里的文章对我有很大帮助，本文自他的博客总结而来，亦有很大一部分文字直接复制自它的博客。</p>
+<h1 id="can-kao-lian-jie">参考链接</h1>
+<blockquote>
+<p><a href="https://openwrt.org/docs/guide-developer/build-system/wsl">https://openwrt.org/docs/guide-developer/build-system/wsl</a></p>
+<p><a href="https://p3terx.com/archives/compiling-openwrt-with-wsl.html">https://p3terx.com/archives/compiling-openwrt-with-wsl.html</a></p>
+<p><a href="https://blog.csdn.net/wangyijieonline/article/details/105360138">https://blog.csdn.net/wangyijieonline/article/details/105360138</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>OpenWrt</tag>
+        <tag>路由器</tag>
+        <tag>WSL</tag>
+      </tags>
+  </entry>
+</search>

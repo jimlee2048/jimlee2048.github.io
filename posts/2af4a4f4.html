@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.0.5/fancybox/fancybox.css" integrity="sha256-uTcjoMD6rPt4OyV3Rs02Slxl0BJGMNVKAm/1eYPt2go=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jiml.ee","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.23.2","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500},"language":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/config.min.js" defer></script>
+
+    <meta name="description" content="写在前面：本文大量复制和借鉴了无忧启动论坛 @ddsony 的教程内容，没有他的帖子就没有我的这篇折腾笔记，十分感谢他帖子的详细指引！  手上有一块闲置 SSD（建兴 T9，128G），想将它利用上来做一块多合一移动系统盘方便随身应急使用。 上网冲浪偶然发现还有系统 All in One 移动硬盘的玩法，于是打算折腾一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘">
+<meta property="og:url" content="https://jiml.ee/posts/2af4a4f4.html">
+<meta property="og:site_name" content="Jim&#39;s Blog">
+<meta property="og:description" content="写在前面：本文大量复制和借鉴了无忧启动论坛 @ddsony 的教程内容，没有他的帖子就没有我的这篇折腾笔记，十分感谢他帖子的详细指引！  手上有一块闲置 SSD（建兴 T9，128G），想将它利用上来做一块多合一移动系统盘方便随身应急使用。 上网冲浪偶然发现还有系统 All in One 移动硬盘的玩法，于是打算折腾一下">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/HnZ7LIJ2zmXqlkG.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/isE1Y6TbAjS52WF.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/lkB3tf7AjQchY8M.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/K3G9DU7xYlLCIqs.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/ngvmLEZDayrKMph.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/m3vwcbkXaJjN81E.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/H7mduOlVr8XBYRC.jpg">
+<meta property="og:image" content="http://bbs.wuyou.net/forum.php?mod=attachment&amp;aid=NDAzMTk5fGY5Zjg5OGY0fDE1ODQ4NzUyODJ8MHw0MTA2MTI%3D.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/BN63XmOeJEu1CIK.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/r18XKPVSNne6FlT.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/5PkG6nXdWiFLSzc.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/317z8pCDfvBFP6A.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/5qYdNFrJgHBK6tk.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/WtZibO4v8eh6xVB.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/wYuzkZy9Wa1EtjD.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/fdcOSHC2x3ojql1.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/qnUDYMtmdL3Hfuv.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/ReQ3kVxFyKvb1H2.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/vGLAyWmXrdx3c4S.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/nVgryOEWjHKcCvF.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/i4hkVUXy92Trd5l.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/qNVopv2tZI85Uji.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/XEc8UQGbLwivfjd.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/M4PUgAHlTz9LnDu.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/7siFg6tXCfV3hWR.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/TWyQAiCR69jhakY.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/K3G9DU7xYlLCIqs.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/BN63XmOeJEu1CIK.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/mZuNJdMtTYX67BF.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/iZlh23pbjLTED4N.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/Wm6YpdiDvHRGSNZ.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/m39xOZRjiQ8yLgo.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/Z1OEqGyldkAWiC3.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/ltfHSXCrbL3RkuN.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/35GVbgo4fTwRhxD.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/4zNLJWTtBo6kFwx.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/Fn7q9IKsLkCVJzR.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/c4Ga8btdr1AFWKU.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/aG1Z6qCvtjh5PcR.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/4YpeKjR2yOntQk5.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/DPIyh4dCwKmFUta.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/23/nd9U5ItyMCrNZk3.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/25/FYjGlzPWL3I1bwT.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/25/sgKUm7TQ9V8W4lB.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/i4hkVUXy92Trd5l.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/22/qNVopv2tZI85Uji.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/aolm1Cr4jXwuyLh.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/oqPdYNwQBDk6iWT.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/yfeMnH9LXIgp5rB.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/cHVnr8gDEi7udGl.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/eUMkCXApi1fHlI5.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/pdk75AjSxPvOmTs.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/eJShM6zIRfHb5FP.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/26/FY4CQx75D9Nr3TU.png">
+<meta property="article:published_time" content="2020-03-22T05:53:46.000Z">
+<meta property="article:modified_time" content="2020-03-22T05:53:46.000Z">
+<meta property="article:author" content="Jim Lee">
+<meta property="article:tag" content="WTG">
+<meta property="article:tag" content="移动硬盘">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/03/22/HnZ7LIJ2zmXqlkG.jpg">
+
+
+<link rel="canonical" href="https://jiml.ee/posts/2af4a4f4.html">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jiml.ee/posts/2af4a4f4.html","path":"posts/2af4a4f4.html","title":"利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘 | Jim's Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.0.5/fancybox/fancybox.umd.js" integrity="sha256-UiSieVaV/DXce2LW7QH+o77w+AIoAvSCPBkezriZ2DQ=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/6.1.3/pangu.umd.js" integrity="sha256-erngBMP3zzoIM6eqQ8dmrReh2vqCRgWmORroIfVoDlE=" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/utils.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/motion.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/sidebar.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/next-boot.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/pjax.min.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/search/local-search.min.js" defer></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.1/pdfobject.min.js","integrity":"sha256-jI72I8ZLVflVOisZIOaLvRew3tyvzeu6aZXFm7P7dEo="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/tags/pdf.min.js" defer></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.7.0/mermaid.min.js","integrity":"sha256-4+IKDqhZ/sXjc8Wtl2/MsxI4e0s1KpEVdbEP7V/Lz8U="}}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/tags/mermaid.min.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/fancybox.min.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/pace.min.js" defer></script>
+
+
+  
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/3.0.1/quicklink.umd.js" integrity="sha256-44BednzIpUeQJcY8qtLyarFu0UCCTbgmWOvaoehiFQQ=" crossorigin="anonymous" defer></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"ignores":null,"url":"https://jiml.ee/posts/2af4a4f4.html"}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/quicklink.min.js" defer></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Jim's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Jim's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Never Settle.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#shi-xian-mu-biao"><span class="nav-number">1.</span> <span class="nav-text">实现目标</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zhi-zuo-guo-cheng"><span class="nav-number">2.</span> <span class="nav-text">制作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#zhun-bei-zi-liao"><span class="nav-number">2.1.</span> <span class="nav-text">准备资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#an-zhuang-liu-cheng"><span class="nav-number">3.</span> <span class="nav-text">安装流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#chu-li-ying-pan-fen-qu-amp-an-zhuang-pe"><span class="nav-number">3.1.</span> <span class="nav-text">处理硬盘分区 &amp; 安装 PE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wtg-an-zhuang"><span class="nav-number">3.2.</span> <span class="nav-text">WTG 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linux-de-an-zhuang-ubuntu-deepin-deng-debian-xi-fa-xing-ban"><span class="nav-number">3.3.</span> <span class="nav-text">Linux 的安装（Ubuntu、Deepin 等 Debian 系发行版）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#an-zhuang-xi-tong-jing-xiang-yi-deepin-wei-li"><span class="nav-number">3.3.1.</span> <span class="nav-text">安装系统镜像（以 Deepin 为例）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#she-zhi-shen-du-yin-cang"><span class="nav-number">3.3.2.</span> <span class="nav-text">设置深度隐藏</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hou-ji"><span class="nav-number">4.</span> <span class="nav-text">后记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#sheng-ji-ubuntu-nei-he-hou-de-cao-zuo"><span class="nav-number">4.1.</span> <span class="nav-text">升级 Ubuntu 内核后的操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mei-hua-qi-dong-xiang"><span class="nav-number">4.2.</span> <span class="nav-text">美化启动项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vm-ware-jia-zai"><span class="nav-number">4.3.</span> <span class="nav-text">VMWare 加载</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jim Lee"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Jim Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jimlee2048" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jimlee2048" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml" rel="noopener me"><i class="fa fa-rss fa-fw"></i></a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiml.ee/posts/2af4a4f4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Jim Lee">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘 | Jim's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-22 13:53:46" itemprop="dateCreated datePublished" datetime="2020-03-22T13:53:46+08:00">2020-03-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" itemprop="url" rel="index"><span itemprop="name">解决方案</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/2af4a4f4.html" class="post-meta-item twikoo_visitors" data-flag-title="利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="twikoo_visitors"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在前面</strong>：本文大量复制和借鉴了<a target="_blank" rel="noopener" href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=410612&amp;extra=page%3D1">无忧启动论坛 @ddsony 的教程内容</a>，没有他的帖子就没有我的这篇折腾笔记，十分感谢他帖子的详细指引！</p>
+</blockquote>
+<p>手上有一块闲置 SSD（建兴 T9，128G），想将它利用上来做一块多合一移动系统盘方便随身应急使用。</p>
+<p>上网冲浪偶然发现还有系统 All in One 移动硬盘的玩法，于是打算折腾一下</p>
+<span id="more"></span>
+<h1 id="shi-xian-mu-biao">实现目标</h1>
+<ol>
+<li>同时兼容 UEFI 和 Legacy 启动</li>
+<li>隐藏系统分区和启动分区，可以当作普通移动硬盘使用</li>
+<li> WTG</li>
+<li>Linux（这里使用 Ubuntu）</li>
+<li>WIN PE（这里使用 <a target="_blank" rel="noopener" href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=349965&amp;extra=page%3D1">chiannet 制作的 USBOS V3</a>）</li>
+</ol>
+<h1 id="zhi-zuo-guo-cheng">制作过程</h1>
+<h2 id="zhun-bei-zi-liao"><a class="header-anchor" href="#准备资料"></a>准备资料</h2>
+<p>一个移动硬盘 / U 盘（固态 U 盘或者 WTG 认证 U 盘），用来安装</p>
+<p>另一个空白 U 盘，大小最好 4G 以上，用作装 Linux 的启动盘</p>
+<p>我整理的<a target="_blank" rel="noopener" href="http://www.filedropper.com/200326wtg">资料包</a></p>
+<p><strong>镜像</strong>：</p>
+<p>Ubuntu</p>
+<p>Win10 使用官方 1909</p>
+<p><a target="_blank" rel="noopener" href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=349965&amp;extra=page%3D1">chiannet 制作的 USBOS V3</a></p>
+<p><strong>软件</strong>：</p>
+<p><a target="_blank" rel="noopener" href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=330493&amp;extra=page%3D1">MBROSTool</a> 本文主要工具</p>
+<p><a target="_blank" rel="noopener" href="https://msfn.org/board/topic/149612-winntsetup-v40/">WinNTSetup</a> 安装 WTG 用</p>
+<p><a target="_blank" rel="noopener" href="https://china.paragon-software.com/home-windows/extfs-for-windows-download">ExtFS for Windows</a> 在 windows 下读写 ext4 的分区，10 天免费试用，到期后限制向 Ext4 分区读写的性能。</p>
+<h1 id="an-zhuang-liu-cheng">安装流程</h1>
+<h2 id="chu-li-ying-pan-fen-qu-amp-an-zhuang-pe"><a class="header-anchor" href="#处理硬盘分区-安装PE"></a>处理硬盘分区 &amp; 安装 PE</h2>
+<ol>
+<li>连接移动硬盘，打开 MBROSTool，在<code>选项</code>中把<code>显示所有磁盘</code>打勾</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/HnZ7LIJ2zmXqlkG.jpg" alt=""></p>
+<p>然后在下方<strong>磁盘</strong>处选择要制作的移动硬盘</p>
+<p><img data-src="https://i.loli.net/2020/03/22/isE1Y6TbAjS52WF.jpg" alt=""></p>
+<p>打开<code>选项</code> - <code>格式化</code>，按如下设置</p>
+<p><img data-src="https://i.loli.net/2020/03/22/lkB3tf7AjQchY8M.jpg" alt=""></p>
+<p>右上角下拉栏选 3 个分区</p>
+<p>50G 用作 WTG 的 win10，选择 <code>VHD</code>，暂时空着路径信息</p>
+<p>50G 用作 Linux，选择 <code>VHD</code>，同样暂时空着路径信息</p>
+<blockquote>
+<p>下文步骤 4Winntsetup 安装结束后，由于是空分区，软件默认不在启动菜单里显示 WTG 菜单项标题，必须修改 “多 UDm 菜单 " 才能显示，修改方法见下文</p>
+</blockquote>
+<p>直接拖入 PE 的镜像文件到分区 3 的路径输入处，选择 “解开”，然后分区大小扩容到 1G（1024M）用作 PE</p>
+<p>右下方<code>用户区</code>打勾，剩余的容量将作为普通的移动硬盘使用</p>
+<p>左下方<code>重建分区表</code>打勾</p>
+<p>其他设置默认，随后点击最下方<code>格式化</code></p>
+<p>在格式化完成的同时，PE 也一并安装好了</p>
+<ol start="2">
+<li>回到主界面，点击<code>高级</code> - <code>备份到MOS</code>，备份 U 盘前 8M 到 BACK.MOS，备份默认保存在 MBROSTool 软件目录下，这个东西留着备用</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/26/K3G9DU7xYlLCIqs.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<ol start="3">
+<li>回到主界面去掉<code>只读</code>的勾选，列表框选择第二分区来挂写子盘</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/ngvmLEZDayrKMph.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>挂载后打开子盘 <code>/udm/udmsmenu.sh</code>，找到如图所示位置，去掉 #defudmmenu 1 和 #defudmmenu 2 两行前面的<code>#</code>（去除注释），并且顺手改掉后面的 <code>""</code> 里面的内容</p>
+<p>比如这里，前面格式化的时候把分区 1 作为 WTG 用的 Win10 盘，分区 2 作为 Deepin 用的盘，这里就改成了</p>
+<p><img data-src="https://i.loli.net/2020/03/22/m3vwcbkXaJjN81E.jpg" alt=""></p>
+<p>修改完后<strong>记得保存</strong></p>
+<p>同样的方法修改 <code>/EFI/mbrosefis.cfg</code></p>
+<p><img data-src="https://i.loli.net/2020/03/22/H7mduOlVr8XBYRC.jpg" alt=""></p>
+<p>到这里硬盘就处理好了，下面我们来进行 WTG 的安装</p>
+<blockquote>
+<p>删掉子盘 <code>/udm/pic/bubble.png</code> 可以关闭掉 MBR 引导时菜单的泡泡动画</p>
+</blockquote>
+<h2 id="wtg-an-zhuang"><a class="header-anchor" href="#WTG安装"></a>WTG 安装</h2>
+<ol>
+<li>回到主界面，打开<code>高级</code> -<code>BootICE</code> 按下图操作</li>
+</ol>
+<p><img data-src="http://bbs.wuyou.net/forum.php?mod=attachment&amp;aid=NDAzMTk5fGY5Zjg5OGY0fDE1ODQ4NzUyODJ8MHw0MTA2MTI%3D.jpg" alt="图片来自 无忧启动论坛@ddsony"></p>
+<ol start="2">
+<li>回到主界面，点击<code>常用</code> - <code>加载</code>，选择刚才分出的 50G 的 VHD 分区，点<code>高级</code>再点击<code>分区表加载</code></li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/BN63XmOeJEu1CIK.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/23/r18XKPVSNne6FlT.jpg" alt="批注 2020-03-23 000143"></p>
+<ol start="3">
+<li>点击’高级’-‘分区管理’，去掉用户区 MBSuDATA 的激活状态，同时激活安装分区；</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/5PkG6nXdWiFLSzc.jpg" alt=""></p>
+<p>如图，<strong>如果安装分区类型不是 0x07 的话，选中后点 <code>修改</code>，把分区类型改为 0x07。如果以后又卸载再重新挂载的，仍旧要改</strong></p>
+<p><img data-src="https://i.loli.net/2020/03/22/317z8pCDfvBFP6A.jpg" alt=""></p>
+<ol start="4">
+<li>打开 WinNTSetup，填好安装源路径和其他信息，<strong>引导驱动器和安装磁盘的位置是同一个，即上面分区表加载的要安装 WTG 的分区</strong>，先点 <code>F</code> 格式化一遍，再点<code>开始安装</code>，弹出的窗口选择默认的<code>使用bootsect.exe更新启动代码</code>，然后点确认</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/5qYdNFrJgHBK6tk.png" alt=""></p>
+<p>WinNtSetup 安装完成后，提示系统重启时以 BIOS 方式重启；</p>
+<ol start="5">
+<li>
+<p>安装完成后，提示系统重启。重启时再引导界面选择移动硬盘引导，重启到到 “多 UDm 菜单”，点击 WTG 启动菜单项。</p>
+<p>等待 WTG 系统配置好设备信息，还有一次重启，同样重启到 “多 UDm 菜单”，点击 WTG 启动菜单项，一直到 WTG 安装完毕进入桌面；</p>
+<p>进入桌面后进行系统激活，然后重启回到本机系统</p>
+</li>
+<li>
+<p>**（可选，非必要）** 打开 MBROSTool 工具文件夹下的 ghost32w.exe 进行 GHOST 备份</p>
+</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/WtZibO4v8eh6xVB.jpg" alt="打开程序"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/wYuzkZy9Wa1EtjD.jpg" alt="选择移动硬盘"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/fdcOSHC2x3ojql1.jpg" alt="选择WTG的分区（这里是第一个）"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/qnUDYMtmdL3Hfuv.jpg" alt="选择备份文件保存位置，路径最好不要有中文"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/ReQ3kVxFyKvb1H2.jpg" alt="是否压缩备份文件以及压缩的级别"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/vGLAyWmXrdx3c4S.jpg" alt="选Yes"></p>
+<p><img data-src="https://i.loli.net/2020/03/22/nVgryOEWjHKcCvF.jpg" alt="选 Force lock"></p>
+<p>以后 WTG 的系统如果坏了，就可以再用工具<code>分区表加载</code>同一个分区，用 GHOST 恢复文件到安装分区后再进行以下的步骤就能轻松修复。</p>
+<ol start="7">
+<li>打开 MBROStool，先参照准备工作中的步骤 1 切换<code>磁盘</code>到当前的移动硬盘，然后参照下图深度卸载掉 WTG 的安装分区，这样就隐藏好安装分区了</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/i4hkVUXy92Trd5l.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/qNVopv2tZI85Uji.jpg" alt=""></p>
+<ol start="8">
+<li>如图所示恢复一开始备份的 MOS</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/03/22/XEc8UQGbLwivfjd.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/M4PUgAHlTz9LnDu.jpg" alt=""></p>
+<p>然后点<code>高级</code> - <code>分区管理</code>，恢复原来用户区 MBSuDATA 的激活状态（有些古怪电脑用户区不激活就无法启动）；<br>
+9. 软件右上角去掉只读，点旁边 UDm 下拉列表框选择挂载 WTG 的安装分区；<br>
+挂载后软件界面右键该分区，菜单选择<code>快启处理</code>。生成完毕后，WTG 就算装好了。</p>
+<p><img data-src="https://i.loli.net/2020/03/22/7siFg6tXCfV3hWR.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/TWyQAiCR69jhakY.jpg" alt=""></p>
+<h2 id="linux-de-an-zhuang-ubuntu-deepin-deng-debian-xi-fa-xing-ban"><a class="header-anchor" href="#Linux的安装（Ubuntu、Deepin等Debian系发行版）"></a>Linux 的安装（Ubuntu、Deepin 等 Debian 系发行版）</h2>
+<h3 id="an-zhuang-xi-tong-jing-xiang-yi-deepin-wei-li"><a class="header-anchor" href="#安装系统镜像（以Deepin为例）"></a>安装系统镜像（以 Deepin 为例）</h3>
+<ol>
+<li>
+<p>保险起见，再备份一次 MOS</p>
+<p><img data-src="https://i.loli.net/2020/03/26/K3G9DU7xYlLCIqs.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+</li>
+<li>
+<p>挂载 Linux 的安装分区</p>
+<p><img data-src="https://i.loli.net/2020/03/22/BN63XmOeJEu1CIK.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/mZuNJdMtTYX67BF.jpg" alt=""></p>
+</li>
+<li>
+<p>拿出另一个 U 盘，用 Easy2Boot 制作 ISO 启动盘。如图：</p>
+<p><img data-src="https://i.loli.net/2020/03/23/iZlh23pbjLTED4N.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>制作完成后，在_ISO\Linux\ 目录下拷入 Deepin 的镜像文件：</p>
+<p><img data-src="https://i.loli.net/2020/03/23/Wm6YpdiDvHRGSNZ.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>关机，重启引导进入 U 盘，选 <code>Linux</code> 菜单项进入，再选择你的镜像启动 ISO：</p>
+<p><img data-src="https://i.loli.net/2020/03/23/m39xOZRjiQ8yLgo.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p><img data-src="https://i.loli.net/2020/03/23/Z1OEqGyldkAWiC3.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p><img data-src="https://i.loli.net/2020/03/23/ltfHSXCrbL3RkuN.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p><img data-src="https://i.loli.net/2020/03/23/35GVbgo4fTwRhxD.png" alt="图片来自 无忧启动论坛@ddsony"></p>
+<p>进入安装界面，跟着安装流程走就好。</p>
+<p>需要注意的是，在选择安装位置的页面，我们需要选择选择<code>高级安装</code>，找到上文事先分挂载好的安装分区，点击设定其文件系统为 <code>ext4</code>、挂载点为 <code>\</code>。</p>
+<p>我们还需要点击左下角<code>修改引导器</code>，把引导器也同样设为这个分区，之后就可以点击<code>安装</code>了。</p>
+<p>选择界面如图所示</p>
+<p><img data-src="https://i.loli.net/2020/03/23/4zNLJWTtBo6kFwx.png" alt="以Deepin为例"></p>
+</li>
+<li>
+<p>安装完成后，系统将会自动重启。我们回到本机系统。</p>
+<p>如果你已经装好 <a target="_blank" rel="noopener" href="https://china.paragon-software.com/home-windows/extfs-for-windows-download">ExtFS for Windows</a> 的话，我们应该就能看到刚安装完 deepin 的分区了</p>
+<blockquote>
+<p>如果你不想安装这个软件，你还可以在刚才用来装 Linux 镜像的 LU 盘里操作（进试用）</p>
+</blockquote>
+<p>我们打开这个分区，复制 <code>Ubuntu-UDm深隐资料包</code>里的 <code>grldr</code> 文件和 <code>/efi</code> 文件夹到根目录。</p>
+<p>然后打开 <code>/boot/grub</code> ，将下面的 <code>/grub.cfg</code> 复制到 根目录的 <code>/efi</code> 下，并更名为 <code>mbrosefi_qk.menu.cfg</code></p>
+<blockquote>
+<p>需要注意的是，工具内原有提供的 <code>grldr</code>、<code>/efi/boot/bootia32</code> 和 <code>/efi/boot/bootia32</code> 存在问题，我这里使用工具提供的文件无法正常启动 Linux。</p>
+<p>我已经在自行打包的 <code>Ubuntu-UDm深潜资料包</code>中提供了我个人使用后成功安装 Ubuntu 的替换文件。其他发行版可以自行尝试使用。</p>
+</blockquote>
+</li>
+<li>
+<p>我们打开更名好的 <code>mbrosefi_qk.menu.cfg</code>，按照以下规则对其进行修改</p>
+<ul>
+<li>在所有 <code>set root='hdX,msdosY' </code>（X,Y 代表数字）类似的行 的前面加上 #注释掉，或者直接删掉该行</li>
+</ul>
+<p><img data-src="https://i.loli.net/2020/03/23/Fn7q9IKsLkCVJzR.jpg" alt=""></p>
+<ul>
+<li>所有以 <code>linux</code> 开始的行，须在该行代码末尾添加<code>空格 + $udmboot</code>。</li>
+</ul>
+<p><img data-src="https://i.loli.net/2020/03/23/c4Ga8btdr1AFWKU.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/23/aG1Z6qCvtjh5PcR.jpg" alt=""></p>
+<ul>
+<li><code>linux  /boot/vmlinuz-...</code>、<code>initrd  /boot/initrd....</code> 和 <code>loadfont /boot/...</code> 等开始的行，需要在 <code>/boot</code> 字段前加入<code> ($rooti)</code> 字段。</li>
+</ul>
+<p><img data-src="https://i.loli.net/2020/03/23/4YpeKjR2yOntQk5.jpg" alt=""></p>
+   <center>↓↓↓↓↓↓↓↓↓↓↓↓</center>
+<p><img data-src="https://i.loli.net/2020/03/23/DPIyh4dCwKmFUta.jpg" alt=""></p>
+</li>
+<li>
+<p>打开资料包中的 <code>menu.lst</code> 和 <code>menu0.lst</code>，对照着刚刚修改的 <code>/efi/mbrosefi_qk.menu.cfg</code> 里的信息对 <code>menu.lst</code> 和 <code>menu0.lst</code> 进行以下修改</p>
+<ul>
+<li>
+<p>把 <code>menu.lst</code> 和 <code>menu0.lst</code> 里所有的 ``–set=root <code>后面的一大串数字（UUID）全部修改为</code> /efi/mbrosefi_qk.menu.cfg <code>里</code> root=UUID=` 后面的一大串数字</p>
+<p><img data-src="https://i.loli.net/2020/03/23/nd9U5ItyMCrNZk3.jpg" alt="这样的一串数字"></p>
+<p>然后，修改以下内容：</p>
+</li>
+<li>
+<p>修改 <code>menu.lst</code> 和 <code>menu0.lst</code> 里所有的内核版本号数字为 <code>/efi/mbrosefi_qk.menu.cfg</code> 里的内核版本号数字</p>
+<p><img data-src="https://i.loli.net/2020/03/25/FYjGlzPWL3I1bwT.png" alt="/efi/mbrosefi_qk.menu.cfg 里的内核版本号数字"></p>
+<p><img data-src="https://i.loli.net/2020/03/25/sgKUm7TQ9V8W4lB.png" alt="要修改的 menu.lst 和 menu0.lst 里的内核版本号"></p>
+<p>完成后保存并复制到 Linux 的安装分区根目录 <code>/</code></p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="she-zhi-shen-du-yin-cang"><a class="header-anchor" href="#设置深度隐藏"></a>设置深度隐藏</h3>
+<ol>
+<li>
+<p>重启电脑，用 MBR 或 UEFI 引导移动硬盘进入 UDm 菜单，然后尝试进入安装好的 Linux。</p>
+</li>
+<li>
+<p>如果 Linux 能正常启动，在简单配置 Linux 后重启回到主机系统，把 <code>udm</code> 和 <code>UDm-hook.sh</code> 复制到 移动硬盘普通储存区或另一个 U 盘，然后重启到 Linux 按步骤进行以下修改：</p>
+<ol>
+<li>复制 <code>udm</code> 到 <code>/usr/bin</code></li>
+<li>在 <code>/etc/initramfs-tools/hooks</code> 下新建脚本 <code>UDm-hook.sh</code>（名字可随意），代码如下：</li>
+</ol>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">  PREREQ=<span class="string">""</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">prereqs</span></span>()</span><br><span class="line">  {</span><br><span class="line">          <span class="built_in">echo</span> <span class="string">"<span class="variable">$PREREQ</span>"</span></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line">  <span class="comment"># get pre-requisites</span></span><br><span class="line">  prereqs)</span><br><span class="line">          prereqs</span><br><span class="line">          <span class="built_in">exit</span> 0</span><br><span class="line">          ;;</span><br><span class="line">  <span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line">. /usr/share/initramfs-tools/hook-functions</span><br><span class="line"></span><br><span class="line">copy_exec /usr/bin/udm /bin</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>如果你找不到 <code>/etc/initramfs-tools</code>，请先安装工具</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> apt-get install initramfs-tools</span><br></pre></td></tr></tbody></table></figure>
+</blockquote>
+<ol start="3">
+<li>编辑 <code>/usr/initramfas-tools/init</code>，</li>
+</ol>
+<p>在打开的文档中寻找 <code>run_scripts /scripts/init-top </code>一行，并在该行代码下新增两条代码</p>
+ <figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">udmboot=`udm 2&gt;/dev/null`; udmdev=`<span class="built_in">echo</span> <span class="variable">$udmboot</span> | <span class="built_in">cut</span> -d<span class="string">" "</span> -f1`; udmroot=`<span class="built_in">echo</span> <span class="variable">$udmboot</span> | <span class="built_in">cut</span> -d<span class="string">" "</span> -f2`</span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">${udmdev}</span>"</span> ]; <span class="keyword">then</span> ROOT=<span class="variable">${udmdev}</span>; umount <span class="variable">${udmdev}</span> 2&gt;/dev/null;<span class="keyword">fi</span></span><br></pre></td></tr></tbody></table></figure>
+<p>然后保存。</p>
+<ol start="4">
+<li>
+<p>打开终端，运行</p>
+<p>完成后重启回本机系统</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> update-initramfs -u</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>打开 <code>MBMBROSTool</code> 工具，跟刚才一样深度卸载掉 Linux 的安装分区</p>
+<p><img data-src="https://i.loli.net/2020/03/22/i4hkVUXy92Trd5l.jpg" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/22/qNVopv2tZI85Uji.jpg" alt=""></p>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>注意：不用再恢复 MOS！！！</strong></p>
+<blockquote>
+<ul>
+<li>总结下 Linux 深度隐藏的操作
+<ol>
+<li>添加 <code>udm</code> 到 <code>/boot/initrd.img-xxx</code> 的 <code>/bin</code> 里</li>
+<li>修改 <code>/boot/initrd.img-xxx</code> 里的 <code>init</code>，加入脚本</li>
+<li>在 <code>MBROSTool</code> 上把 Linux 安装分区深度卸载</li>
+</ol>
+</li>
+<li>该方法仅在 Ubuntu 19.10 上测试成功，其他 Debian 系请自行测试，非 Debian 系可以参考一下上面的总结和资料包里的 <code>UDM对linux的支持.txt</code>。Arch 系发行版可以参考下<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Mkinitcpio_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">这篇文档</a>来修改</li>
+</ul>
+</blockquote>
+<h1 id="hou-ji">后记</h1>
+<h2 id="sheng-ji-ubuntu-nei-he-hou-de-cao-zuo"><a class="header-anchor" href="#升级Ubuntu内核后的操作"></a>升级 Ubuntu 内核后的操作</h2>
+<p>先进行升级</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> upgrade</span><br></pre></td></tr></tbody></table></figure>
+<p>提示 linux 的内核有更新，可以在更新的时候记一下新内核的版本号</p>
+<p>升级后用 root 打开文件管理器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nautilus</span><br></pre></td></tr></tbody></table></figure>
+<p>更新内核时如果没有留意版本号，可以打开 <code>/boot/grub/grub.cfg</code> 参照安装时的步骤找找</p>
+<p>知道新内核版本号后打开根目录下的 <code>menu.lst</code>、<code>menu0.lst</code> 以及 <code>/efi/mbrosefi_qk.menu.cfg</code>，把里面旧的版本号全部查找替换为新的版本号</p>
+<p>保存，重启查看效果</p>
+<h2 id="mei-hua-qi-dong-xiang"><a class="header-anchor" href="#美化启动项"></a>美化启动项</h2>
+<p>先读写挂载子盘（参考 安装流程 - 处理硬盘分区）</p>
+<p>这里只展示一些我作的修改，详细的美化指南请看工具内的补充帮助</p>
+<ul>
+<li>
+<p>删掉 <code>/udm/pic/bubble.png</code> 可以关闭 MBR 启动菜单里的泡泡动画</p>
+</li>
+<li>
+<p><code>/efi/theme</code> 修改 EFI 启动下引导菜单的主题，加载的是 grub 的主题，但是主题的加载效果有些奇怪，同时要注意子盘大小限制</p>
+<p>这里我使用的是自行魔改了的 <a target="_blank" rel="noopener" href="https://www.gnome-look.org/p/1200710/">Atomic GRUB Theme</a>，加入了原主题没有的 <code>udm.png</code>，修改 <code>reastar.png</code> 为 <code>reboot.png</code> 来让它奇怪的 grub 能够识别。资料包里会提供我自用的魔改主题</p>
+</li>
+</ul>
+<h2 id="vm-ware-jia-zai"><a class="header-anchor" href="#VMWare加载"></a>VMWare 加载</h2>
+<p><img data-src="https://i.loli.net/2020/03/26/aolm1Cr4jXwuyLh.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/oqPdYNwQBDk6iWT.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/yfeMnH9LXIgp5rB.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/cHVnr8gDEi7udGl.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/eUMkCXApi1fHlI5.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/pdk75AjSxPvOmTs.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/eJShM6zIRfHb5FP.png" alt=""></p>
+<p><img data-src="https://i.loli.net/2020/03/26/FY4CQx75D9Nr3TU.png" alt=""></p>
+<p>其他默认或自行调整</p>
+<blockquote>
+<p>参考链接</p>
+<p><a target="_blank" rel="noopener" href="http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=410612&amp;extra=page%3D1">http://bbs.wuyou.net/forum.php?mod=viewthread&amp;tid=410612&amp;extra=page%3D1</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.luobotou.org/thread-43549-1-1.html">https://bbs.luobotou.org/thread-43549-1-1.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.luobotou.org/forum.php?mod=viewthread&amp;tid=44272&amp;extra=page%3D&amp;page=1">https://bbs.luobotou.org/forum.php?mod=viewthread&amp;tid=44272&amp;extra=page%3D&amp;page=1</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.luobotou.org/thread-45230-1-1.html">https://bbs.luobotou.org/thread-45230-1-1.html</a></p>
+<p><a target="_blank" rel="noopener" href="http://manpages.ubuntu.com/manpages/bionic/en/man8/initramfs-tools.8.html">http://manpages.ubuntu.com/manpages/bionic/en/man8/initramfs-tools.8.html</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jim Lee
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://jiml.ee/posts/2af4a4f4.html" title="利用闲置 SSD 打造 WTG + Linux + PE 多合一移动系统硬盘">https://jiml.ee/posts/2af4a4f4.html</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WTG/" rel="tag"><i class="fa fa-tag"></i> WTG</a>
+              <a href="/tags/%E7%A7%BB%E5%8A%A8%E7%A1%AC%E7%9B%98/" rel="tag"><i class="fa fa-tag"></i> 移动硬盘</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/39aaddee.html" rel="prev" title="Typora + PicGo - 面向 Hexo 博客撰写需要的写作工具配置">
+                  <i class="fa fa-angle-left"></i> Typora + PicGo - 面向 Hexo 博客撰写需要的写作工具配置
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/3a4e373e.html" rel="next" title="博客折腾笔记②：hexo 的优化">
+                  博客折腾笔记②：hexo 的优化 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments"><div id="twikoo-comments"></div></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2018 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Jim Lee</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="twikoo" type="application/json">{"enable":true,"visitor":true,"envId":"https://blog-twikoo-tawny.vercel.app","el":"#twikoo-comments"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.twikoo.el)
+    .then(() => NexT.utils.getScript(
+      CONFIG.twikoo.jsUrl || 'https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js',
+      { condition: window.twikoo }
+    ))
+    .then(() => {
+      twikoo.init(CONFIG.twikoo);
+    });
+});
+</script>
+<style>
+.post-block, .comments {
+  overflow: visible;
+}
+.tk-owo-emotion {
+  display: inline-block;
+}
+</style>
+<script src="/js/post-outdated-warning.js"></script>
+</body>
+</html>

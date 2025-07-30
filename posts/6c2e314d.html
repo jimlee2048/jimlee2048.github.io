@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.0.5/fancybox/fancybox.css" integrity="sha256-uTcjoMD6rPt4OyV3Rs02Slxl0BJGMNVKAm/1eYPt2go=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jiml.ee","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.23.2","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500},"language":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/config.min.js" defer></script>
+
+    <meta name="description" content="标题 两种语法，分别为类 Setext 和类 atx 形式。 类 Setext 式 利用 &#x3D; 和 -： 标题 &#x3D;&#x3D;&#x3D;&#x3D;&#x3D; 标题 -----  类 atx 式 在行首插入 1 到 6 个#, 对应到标题 1 到 6 阶。 # 标题 ## 标题 ### 标题 #### 标题 ##### 标题 ###### 标题  也可以 # 标题 # ## 标题 ## ### 标题 ###     注意： 不要忘记#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Markdown 语法学习笔记①">
+<meta property="og:url" content="https://jiml.ee/posts/6c2e314d.html">
+<meta property="og:site_name" content="Jim&#39;s Blog">
+<meta property="og:description" content="标题 两种语法，分别为类 Setext 和类 atx 形式。 类 Setext 式 利用 &#x3D; 和 -： 标题 &#x3D;&#x3D;&#x3D;&#x3D;&#x3D; 标题 -----  类 atx 式 在行首插入 1 到 6 个#, 对应到标题 1 到 6 阶。 # 标题 ## 标题 ### 标题 #### 标题 ##### 标题 ###### 标题  也可以 # 标题 # ## 标题 ## ### 标题 ###     注意： 不要忘记#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-01-07T07:10:39.000Z">
+<meta property="article:modified_time" content="2018-01-07T07:10:39.000Z">
+<meta property="article:author" content="Jim Lee">
+<meta property="article:tag" content="Markdown">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://jiml.ee/posts/6c2e314d.html">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jiml.ee/posts/6c2e314d.html","path":"posts/6c2e314d.html","title":"Markdown 语法学习笔记①"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Markdown 语法学习笔记① | Jim's Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.0.5/fancybox/fancybox.umd.js" integrity="sha256-UiSieVaV/DXce2LW7QH+o77w+AIoAvSCPBkezriZ2DQ=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/6.1.3/pangu.umd.js" integrity="sha256-erngBMP3zzoIM6eqQ8dmrReh2vqCRgWmORroIfVoDlE=" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/utils.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/motion.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/sidebar.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/next-boot.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/pjax.min.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/search/local-search.min.js" defer></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.1/pdfobject.min.js","integrity":"sha256-jI72I8ZLVflVOisZIOaLvRew3tyvzeu6aZXFm7P7dEo="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/tags/pdf.min.js" defer></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.7.0/mermaid.min.js","integrity":"sha256-4+IKDqhZ/sXjc8Wtl2/MsxI4e0s1KpEVdbEP7V/Lz8U="}}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/tags/mermaid.min.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/fancybox.min.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/pace.min.js" defer></script>
+
+
+  
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/3.0.1/quicklink.umd.js" integrity="sha256-44BednzIpUeQJcY8qtLyarFu0UCCTbgmWOvaoehiFQQ=" crossorigin="anonymous" defer></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"ignores":null,"url":"https://jiml.ee/posts/6c2e314d.html"}</script>
+  <script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.23.2/source/js/third-party/quicklink.min.js" defer></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Jim's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Jim's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Never Settle.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#biao-ti"><span class="nav-number">1.</span> <span class="nav-text">标题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lei-setext-shi"><span class="nav-number">1.1.</span> <span class="nav-text">类 Setext 式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lei-atx-shi"><span class="nav-number">1.2.</span> <span class="nav-text">类 atx 式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qu-kuai-yin-yong"><span class="nav-number">2.</span> <span class="nav-text">区块引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lie-biao"><span class="nav-number">3.</span> <span class="nav-text">列表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#you-xu-lie-biao"><span class="nav-number">3.1.</span> <span class="nav-text">有序列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wu-xu-lie-biao"><span class="nav-number">3.2.</span> <span class="nav-text">无序列表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dai-ma-qu-kuai"><span class="nav-number">4.</span> <span class="nav-text">代码区块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fen-ge-xian"><span class="nav-number">5.</span> <span class="nav-text">分隔线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lian-jie-cha-ru"><span class="nav-number">6.</span> <span class="nav-text">链接插入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xing-nei-shi"><span class="nav-number">6.1.</span> <span class="nav-text">行内式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#can-kao-shi"><span class="nav-number">6.2.</span> <span class="nav-text">参考式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wen-zi-chu-li"><span class="nav-number">7.</span> <span class="nav-text">文字处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xie-ti"><span class="nav-number">7.1.</span> <span class="nav-text">斜体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jia-cu"><span class="nav-number">7.2.</span> <span class="nav-text">加粗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cu-xie-ti"><span class="nav-number">7.3.</span> <span class="nav-text">粗斜体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shan-chu-xian"><span class="nav-number">7.4.</span> <span class="nav-text">删除线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zhu-jiao"><span class="nav-number">7.5.</span> <span class="nav-text">注脚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dai-ma-biao-ji"><span class="nav-number">7.6.</span> <span class="nav-text">代码标记</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tu-pian-cha-ru"><span class="nav-number">8.</span> <span class="nav-text">图片插入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xing-nei-shi-1"><span class="nav-number">8.1.</span> <span class="nav-text">行内式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#can-kao-shi-1"><span class="nav-number">8.2.</span> <span class="nav-text">参考式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nei-rong-mu-lu-toc"><span class="nav-number">9.</span> <span class="nav-text">内容目录（TOC）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#biao-ge"><span class="nav-number">10.</span> <span class="nav-text">表格</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dai-ban-shi-xiang-ji-todo-lie-biao"><span class="nav-number">11.</span> <span class="nav-text">待办事项及 TODO 列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zi-dong-lian-jie"><span class="nav-number">12.</span> <span class="nav-text">自动链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fan-xie-gang-yong-fa"><span class="nav-number">13.</span> <span class="nav-text">反斜杠用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#html-jian-rong-xing"><span class="nav-number">14.</span> <span class="nav-text">HTML 兼容性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wen-zhang-guo-chang-zhe-die-hexo-yong"><span class="nav-number">15.</span> <span class="nav-text">文章过长折叠 （hexo 用）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jim Lee"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Jim Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jimlee2048" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jimlee2048" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml" rel="noopener me"><i class="fa fa-rss fa-fw"></i></a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiml.ee/posts/6c2e314d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Jim Lee">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Markdown 语法学习笔记① | Jim's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Markdown 语法学习笔记①
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-07 15:10:39" itemprop="dateCreated datePublished" datetime="2018-01-07T15:10:39+08:00">2018-01-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/6c2e314d.html" class="post-meta-item twikoo_visitors" data-flag-title="Markdown 语法学习笔记①" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="twikoo_visitors"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="biao-ti"><a class="header-anchor" href="#标题"></a>标题</h2>
+<p>两种语法，分别为类 Setext 和类 atx 形式。</p>
+<h3 id="lei-setext-shi"><a class="header-anchor" href="#类-Setext-式"></a>类 Setext 式</h3>
+<p>利用 <code>=</code> 和 <code>-</code>：</p>
+<pre><code>标题
+=====
+标题
+-----
+</code></pre>
+<h3 id="lei-atx-shi"><a class="header-anchor" href="#类-atx-式"></a>类 atx 式</h3>
+<p>在行首插入 1 到 6 个<code>#</code>, 对应到标题 1 到 6 阶。</p>
+<pre><code># 标题
+## 标题
+### 标题
+#### 标题
+##### 标题
+###### 标题
+</code></pre>
+<p>也可以</p>
+<pre><code># 标题 #
+## 标题 ##
+### 标题 ###  
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 不要忘记<code>#</code>与标题文字间的空格<br>
+错误示范：<code>##标题</code></p>
+</blockquote>
+<span id="more"></span>
+<h2 id="qu-kuai-yin-yong"><a class="header-anchor" href="#区块引用"></a>区块引用</h2>
+<p>使用 <code>&gt;</code></p>
+<pre><code>&gt; 一些文字
+</code></pre>
+<p>只需在每段第一行加上即可<br>
+还可以嵌套，只要根据层次加上不同数量的 <code>&gt;</code></p>
+<pre><code>&gt; 一些文字
+&gt;&gt; 一些一些文字
+</code></pre>
+<p>引用区域内可以使用其他 Markdown 语法：</p>
+<pre><code>&gt; ## 这是一个标题。
+&gt; 
+&gt; 1.   这是第一行列表项。
+&gt; 2.   这是第二行列表项。
+&gt; 
+&gt; 给出一些例子代码：
+&gt; 
+&gt;     return shell_exec("echo $input | $markdown_script");
+</code></pre>
+<h2 id="lie-biao"><a class="header-anchor" href="#列表"></a>列表</h2>
+<p>分为有序列表与无序列表。<br>
+如果列表项目间用空行分开，那么中间内容将不会被列表项包括在内。</p>
+<pre><code>* 列表项
+
+* 列表项
+</code></pre>
+<p>如果要在列表项目内放进引用，那 &gt; 就需要缩进</p>
+<pre><code>* 列表项
+    &gt; 引用
+</code></pre>
+<p>如果要放代码区块的话，该区块就需要缩进两次</p>
+<pre><code>* 列表项
+        &lt;codehere&gt;
+</code></pre>
+<h3 id="you-xu-lie-biao"><a class="header-anchor" href="#有序列表"></a>有序列表</h3>
+<p>使用 <code>*</code>,<code>+</code> 和 <code>-</code> 标记</p>
+<pre><code>* 列表项
++ 列表项
+- 列表项
+</code></pre>
+<h3 id="wu-xu-lie-biao"><a class="header-anchor" href="#无序列表"></a>无序列表</h3>
+<p>使用<strong>数字加英文句点<code>.</code> 的方式</strong></p>
+<pre><code>1. 列表项
+2. 列表项
+3. 列表项
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：</p>
+<ol>
+<li>在列表标记上使用的数字<strong>并不会影响</strong>输出的顺序<br>
+<s><em>简直智障福音啊</em></s></li>
+<li>文字出现数字 - 句点 - 空白而要避免列表项出现，可以在句点前加上<strong>反斜杠</strong><code>\</code><br>
+eg:<code>1986\. What a great season.</code></li>
+</ol>
+</blockquote>
+<h2 id="dai-ma-qu-kuai"><a class="header-anchor" href="#代码区块"></a>代码区块</h2>
+<p>只需简单地缩进一格（或四个空格）即可</p>
+<p>这是文字</p>
+<pre><code>这是代码
+</code></pre>
+<p>一个代码区块会一直持续到没有缩进的那一行（或是文件结尾）。</p>
+<p>同时，在代码区块中，一般的 Markdown 语法不会被转换。</p>
+<h2 id="fen-ge-xian"><a class="header-anchor" href="#分隔线"></a>分隔线</h2>
+<p>使用三个以上的 <code>*</code>、<code>-</code>、<code>_</code>来建立一个分隔线，可以在星号或是减号中间插入空格，但注意行内不能有其他东西</p>
+<pre><code>文字
+***
+
+文字
+---
+
+文字
+___
+
+文字
+- - -
+
+文字
+* * *
+</code></pre>
+<h2 id="lian-jie-cha-ru"><a class="header-anchor" href="#链接插入"></a>链接插入</h2>
+<p>Markdown 支持两种形式的链接语法： 行内式和参考式两种形式。<br>
+不管是哪一种，链接文字都是用 <code>[]</code> 来标记。</p>
+<h3 id="xing-nei-shi"><a class="header-anchor" href="#行内式"></a>行内式</h3>
+<p>使用方括号 <code>[]</code> 括住所需加链接的文字，并在后面以圆括号 <code>()</code> 形式插入链接（可以是相对路径）。<br>
+如需加入链接描述 (链接的 title 文字) 只需在圆括号中的链接后以 <code>""</code> 包起文字即可。</p>
+<pre><code>这是一个[链接](https://xsllen.tk)
+这是一个有名字的[链接](https://xsllen.tk "Jim's Blog")
+</code></pre>
+<h3 id="can-kao-shi"><a class="header-anchor" href="#参考式"></a>参考式</h3>
+<p>使用方括号 <code>[]</code> 括住所需加链接的文字，并在后面再接上一个方括号 <code>[]</code> 进行用于辨识链接的标记。<br>
+你也可以选择性地在两个方括号中间加上一个空格。</p>
+<pre><code>这是一个[链接][1]
+这是一个[链接] [1]
+</code></pre>
+<p>接着，在文件的任意处把标记的文章内容定义出来。<br>
+链接网址还可以使用尖括号包起。<br>
+网址之后可以选择接着网址描述（title）内容，可以用单引号、双引号或是括弧包着。<br>
+网址描述（title）内容可以放到下一行，也可以加缩进，好看就行。<s>（说得我闲得蛋疼一样）</s></p>
+<pre><code>[1]: https://xsllen.tk
+[1]: &lt;https://xsllen.tk&gt;
+[1]: https://xsllen.tk "My blog"
+[1]: https://xsllen.tk 'My blog'
+[1]: https://xsllen.tk (My blog)
+
+[1]: https://xsllen.tk 
+"My blog"
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong><br>
+1. 链接辨别标签可以有字母、数字、空白和标点符号，但是 ** 并不区分大小写！** 因此以下两个链接是相同的。</p>
+</blockquote>
+<pre><code>[link text][a]
+[link text][A]
+</code></pre>
+<blockquote>
+<p>2. 标记方括号内的内容可以省略（即后一个方括号为空），此时链接标记会视为等同于链接文字。</p>
+<p>[link][]<br>
+相当于<br>
+[link][link]</p>
+</blockquote>
+<p>参考式整体实例：</p>
+<pre><code>I get 10 times more traffic from [Google] [1] than from[Yahoo] [2] or [MSN] [3].
+
+[1]: http://google.com/        "Google"
+[2]: http://search.yahoo.com/  "Yahoo Search"
+[3]: http://search.msn.com/    "MSN Search"
+</code></pre>
+<p>如果改成用链接名称的方式写：</p>
+<pre><code>I get 10 times more traffic from [Google][] than from[Yahoo][] or [MSN][].
+
+[google]: http://google.com/        "Google"
+[yahoo]:  http://search.yahoo.com/  "Yahoo Search"
+[msn]:    http://search.msn.com/    "MSN Search"
+</code></pre>
+<h2 id="wen-zi-chu-li"><a class="header-anchor" href="#文字处理"></a>文字处理</h2>
+<h3 id="xie-ti"><a class="header-anchor" href="#斜体"></a>斜体</h3>
+<p>使用一个 <code>*</code> 或<code>_</code>符号将文字包围起来。</p>
+<pre><code>*斜体文字*
+_斜体文字_
+</code></pre>
+<h3 id="jia-cu"><a class="header-anchor" href="#加粗"></a>加粗</h3>
+<p>使用两个 <code>*</code> 或<code>_</code>符号将文字包围起来。</p>
+<pre><code>**加粗文字**
+__加粗文字__
+</code></pre>
+<h3 id="cu-xie-ti"><a class="header-anchor" href="#粗斜体"></a>粗斜体</h3>
+<p>使用三个 <code>*</code> 或<code>_</code>符号将文字包围起来。</p>
+<pre><code>***粗斜体文字***
+</code></pre>
+<h3 id="shan-chu-xian"><a class="header-anchor" href="#删除线"></a>删除线</h3>
+<p>使用两个 <code>~</code> 符号将文字包围起来。<br>
+<s>带删除线的文字</s></p>
+<h3 id="zhu-jiao"><a class="header-anchor" href="#注脚"></a>注脚</h3>
+<p>使用 <code>[^keyword]</code> 表示注脚，并在文本的任意地方对该注脚定义（类似与参考式）<br>
+示例：</p>
+<pre><code>这里有一个注脚[^footnote]。
+[^footnote]: 这是那个*注脚*的**文本**。
+</code></pre>
+<p>效果：</p>
+<p>这里有一个注脚 <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。</p>
+<blockquote>
+<p><strong>注意：</strong> 使用什么符号开启标签，就要用什么符号结束。</p>
+</blockquote>
+<h3 id="dai-ma-biao-ji"><a class="header-anchor" href="#代码标记"></a>代码标记</h3>
+<p>使用反引号 <code>`</code> 将代码文字包起.</p>
+<pre><code>`&lt;code&gt;code here!&lt;/code&gt;`
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong></p>
+<ul>
+<li>
+<p>如果要在代码区段内插入反引号，应使用<strong>多个反引号</strong>来开启和结束代码区段。</p>
+<pre><code>``code`code``
+</code></pre>
+</li>
+</ul>
+<p>代码区段的起始和结束端都可以<strong>放入一个空白</strong>，起始端后面一个，结束端前面一个，这样你就可以在区段的一开始就插入反引号.</p>
+<pre><code>  `` ` ``
+  `` code`code ``
+</code></pre>
+<ul>
+<li>在代码区段内，&amp; 和方括号都会被<strong>自动地转成 HTML 实体</strong>。</li>
+</ul>
+</blockquote>
+<h2 id="tu-pian-cha-ru"><a class="header-anchor" href="#图片插入"></a>图片插入</h2>
+<p>与链接插入类似，同样包括两种方式： 行内式与参考式。</p>
+<h3 id="xing-nei-shi-1"><a class="header-anchor" href="#行内式-2"></a>行内式</h3>
+<p>使用 <code>![alt text](图片网址)</code><br>
+还可以加上图片描述（title 文字）<br>
+<code>![alt text](图片网址 "描述文字")</code></p>
+<h3 id="can-kao-shi-1"><a class="header-anchor" href="#参考式-2"></a>参考式</h3>
+<p>使用 <code>![alt text][id]</code><br>
+「id」是图片参考的名称，图片参考的定义方式则和连结参考一样：</p>
+<pre><code>[id]: 图片路径 "描述文字"
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 到目前为止， Markdown 还没有办法指定图片的宽高，需要的话可使用普通的 <strong><code>&lt;img&gt;</code></strong> 标签</p>
+</blockquote>
+<h2 id="nei-rong-mu-lu-toc"><a class="header-anchor" href="#内容目录（TOC）"></a>内容目录（TOC）</h2>
+<p>在段落中填写 <code>[TOC]</code> 以显示全文内容的目录结构。</p>
+<p>效果：<br>
+[TOC]</p>
+<h2 id="biao-ge"><a class="header-anchor" href="#表格"></a>表格</h2>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">| 项目        | 价格   |  数量  |</span><br><span class="line">| --------   | -----:  | :----:  |</span><br><span class="line">| 计算机     | \$1600 |   5     |</span><br><span class="line">| 手机        |   \$12   |   12   |</span><br><span class="line">| 管线        |    \$1    |  234  |</span><br></pre></td></tr></tbody></table></figure>
+<p>效果：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th style="text-align:right">价格</th>
+<th style="text-align:center">数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>计算机</td>
+<td style="text-align:right"> $1600</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td> 手机</td>
+<td style="text-align:right"> $12</td>
+<td style="text-align:center">12</td>
+</tr>
+<tr>
+<td> 管线</td>
+<td style="text-align:right"> $1</td>
+<td style="text-align:center">234</td>
+</tr>
+</tbody>
+</table>
+<h2 id="dai-ban-shi-xiang-ji-todo-lie-biao"><a class="header-anchor" href="#待办事项及TODO列表"></a>待办事项及 TODO 列表</h2>
+<p>使用带有 <code>- [ ]</code>（未完成） 或 <code>- [x]</code>（已完成）项的列表语法撰写一个待办事宜列表，并且支持子列表嵌套以及混用 Markdown 语法。<br>
+示例：</p>
+<pre><code>- [ ] 写一个个人主页
+- [x] 写一个Maekdown学习笔记$$
+</code></pre>
+<p>效果：</p>
+<ul>
+<li><input type="checkbox" id="checkbox5"><label for="checkbox5">写一个个人主页</label></li>
+<li><input type="checkbox" id="checkbox6" checked="true"><label for="checkbox6">写一个 Maekdown 学习笔记</label></li>
+</ul>
+<h2 id="zi-dong-lian-jie"><a class="header-anchor" href="#自动链接"></a>自动链接</h2>
+<p>Markdown 支持以比较简短的自动链接形式来处理网址和电子邮件信箱，只需用方括号括起即可，Markdown 就会自动把它转成链接。</p>
+<pre><code>&lt;http://example.com/&gt;
+&lt;address@example.com&gt;
+</code></pre>
+<p>效果：<br>
+<a target="_blank" rel="noopener" href="http://example.com/">http://example.com/</a><br>
+<a href="mailto:address@example.com">address@example.com</a></p>
+<h2 id="fan-xie-gang-yong-fa"><a class="header-anchor" href="#反斜杠用法"></a>反斜杠用法</h2>
+<p>Markdown 可以利用反斜杠来插入一些在语法中有其它意义的符号，例如：如果你想要用星号加在文字旁边的方式来做出强调效果（但不用 <code>&lt;em&gt;</code> 标签），你可以在星号的前面加上反斜杠：</p>
+<pre><code>\*literal asterisks\*
+</code></pre>
+<p>Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的符号：</p>
+<pre><code>\   反斜线
+`   反引号
+*   星号
+_   底线
+{}  花括号
+[]  方括号
+()  括弧
+#   井字号
++   加号
+-   减号
+.   英文句点
+!   惊叹号
+</code></pre>
+<h2 id="html-jian-rong-xing"><a class="header-anchor" href="#HTML兼容性"></a>HTML 兼容性</h2>
+<ol>
+<li>Markdown 文档内可任意使用 html 语句。<br>
+（你想在 Markdown 文档里码 HTML 也没问题的 233）</li>
+<li>Markdown 文档会对特殊字符自动转换，如 <code>&lt;</code> 和 <code>&amp;</code>。</li>
+</ol>
+<h2 id="wen-zhang-guo-chang-zhe-die-hexo-yong"><a class="header-anchor" href="#文章过长折叠-（hexo用）"></a>文章过长折叠 （hexo 用）</h2>
+<p>使用 <code>&lt;!--more--&gt;</code></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>这是那个<em>注脚</em>的<strong>文本</strong>。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jim Lee
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://jiml.ee/posts/6c2e314d.html" title="Markdown 语法学习笔记①">https://jiml.ee/posts/6c2e314d.html</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Markdown/" rel="tag"><i class="fa fa-tag"></i> Markdown</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/c54c0f26.html" rel="next" title="博客折腾笔记①：hexo 部署与自定义">
+                  博客折腾笔记①：hexo 部署与自定义 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments"><div id="twikoo-comments"></div></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2018 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Jim Lee</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="twikoo" type="application/json">{"enable":true,"visitor":true,"envId":"https://blog-twikoo-tawny.vercel.app","el":"#twikoo-comments"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.twikoo.el)
+    .then(() => NexT.utils.getScript(
+      CONFIG.twikoo.jsUrl || 'https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js',
+      { condition: window.twikoo }
+    ))
+    .then(() => {
+      twikoo.init(CONFIG.twikoo);
+    });
+});
+</script>
+<style>
+.post-block, .comments {
+  overflow: visible;
+}
+.tk-owo-emotion {
+  display: inline-block;
+}
+</style>
+<script src="/js/post-outdated-warning.js"></script>
+</body>
+</html>
